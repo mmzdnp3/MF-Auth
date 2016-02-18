@@ -6,7 +6,9 @@ from smtplib import SMTP
 from email.MIMEText import MIMEText
 from email.MIMEMultipart import MIMEMultipart
 import datetime, pyotp, base64, time
-from thread import *
+from threading import *
+import socket
+import sys
 
 def check_expiration(code_list):
     while True:
@@ -15,7 +17,31 @@ def check_expiration(code_list):
             if diff > 90:
                 code_list.remove(pair)
 
-DEBUG = True
+def fulfill_req(s):
+    data = s.recv(4096)
+    print data
+
+def init_socket():
+    s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
+    try:
+        s.bind(('',2327))
+    except socket.error , msg:
+        print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message: ' + msg[1]
+        sys.exit()
+    s.listen(10)
+    print 'Socket Created'
+    while 1:
+        conn, addr = s.accept()
+        print 'Connected with ' + addr[0] + ':' + str(addr[1])
+
+        t3 = Thread(target=fulfill_req, args=(conn,))
+        t3.setDaemon(True)
+        t3.start()
+        
+    s.close()
+
+DEBUG = False
 SECRET_KEY = 'yekterces'
 SQLALCHEMY_DATABASE_URI = 'mysql://root:shadow@localhost:3306/mfauth'
  
@@ -37,10 +63,18 @@ smtp.ehlo()
 smtp.starttls()
 smtp.ehlo
 smtp.login('ryan.holt36', base64.b64decode(pw))
-
+#print 'wtf'
 from_addr = "Ryan Holt <ryan.holt36@gmail.com>"
 code_list = []
-start_new_thread(check_expiration,(code_list,))
+
+t1 = Thread(target=check_expiration, args=(code_list,))
+t1.setDaemon(True)
+t1.start()
+
+t2 = Thread(target=init_socket)
+t2.setDaemon(True)
+t2.start()
+
 
 
 def send_one_time(email):
@@ -76,10 +110,10 @@ def user_loader(user_id):
 def init_request():
     db.create_all()
 
-@app.route('/secret')
+@app.route('/settings')
 @login_required
-def secret():
-    return render_template('secret.html')
+def settings():
+    return render_template('settings.html')
 
 @app.route('/logout')
 def logout():
@@ -97,27 +131,11 @@ def login():
         password = request.form['txtPassword']
         user = User.query.filter_by(username=username).filter_by(password=password)
         if user.count() == 1:
-            email = user.one().email
-            send_one_time(email)
-            return redirect(url_for('key'))
+            login_user(user.one())
+            return redirect(url_for('settings'))
         else:
             flash('Invalid login')
             return 'fail';
-    else:
-        return abort(405)
-
-@app.route('/key', methods=['GET', 'POST'])
-def key():
-    global user
-    if request.method == 'GET':
-        return render_template('key.html')
-    elif request.method == 'POST':
-        key = request.form['txtKey']
-        if [pair for pair in code_list if pair[0] == key]:
-            login_user(user.one())
-            #flash('Welcome back {0}'.format(username))
-            return redirect(url_for('index'))
-        return 'error'
     else:
         return abort(405)
 
@@ -127,6 +145,6 @@ def index():
 
  
 if __name__ == '__main__':
-    port = int(os.getenv('PORT', 5000))
+    port = int(os.getenv('PORT', 5001))
     host = os.getenv('IP', '127.0.0.1')
     app.run(port=port, host=host)
