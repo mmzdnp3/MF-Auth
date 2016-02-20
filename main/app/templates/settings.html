@@ -1,8 +1,37 @@
 {% extends 'base.html' %}
 {% block content %}
+<style>
+div.container4 {
+    height: 45em;
+    position: relative }
+div.container4 p {
+    margin: 0;
+    position: absolute;
+    top: 50%; 
+    left: 50%; 
+    font-size: 100px;
+    font-weight: bold;
+    margin-right: -50%;
+    transform: translate(-50%, -50%) }
+ </style>
+<body>
+	<nav class="fixed-nav-bar">
+        </div>
+          <ul >
+              <li><a  href="/"><b>M F A U T H</b></a></li>
+            {% if current_user.is_authenticated %}
+              <li><a class="active" href="/settings"><b>Settings</b></a></li>
+              <li><a href="/logout">Logout</a></li>
+            {% else %}
+              <li ><a href="/login"><b>Login</b></a></li>
+            {% endif %}
+          </ul>
+        </div>
+    </nav>
 <div class="jumbotron">
   <div class="container">
-    <h1>Settings</h1>
+  <div class=container4> <p>SETTINGS </div>
   </div>
 </div>
 {% endblock %}
+</body>

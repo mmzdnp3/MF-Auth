@@ -1,38 +1,73 @@
+<!DOCTYPE html>
 <html>
-  <head>
-    <title></title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.min.css">
-    <style>
-    body {
-      padding-top: 65px;
-    }
+<title>MFAuth</title>
+<style>
+html, body {
+    width: 100%;
+    height: 100%;
+    font-family: "Helvetica Neue", Helvetica, sans-serif;
+    color: #444;
+    -webkit-font-smoothing: antialiased;
+    /*background-image: url('hekla-iceland.jpg');*/
+    /*background: #f3f3f3;;*/
+    background-size: cover;
+    position: fixed;
+    background-color: #f3f3f3;
+ 
+}
+
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0px solid #e7e7e7;
+    background-color: #f3f3f3;
+}
+.fixed-nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  width: 100%;
+  height: 50px;
+}
+li {
+    float: left;
+}
+
+li a {
+    display: inline-block;
+    color: #666;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover:not(.active) {
+    background-color: #ddd;
+}
+
+li a.active {
+    color: white;
+    background-color: #2f3842;
+}
     </style>
   </head>
   <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">MFAuth</a>
+    <nav class="fixed-nav-bar">
         </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="/">Home</a></li>
+          <ul >
+              <li><a class="active" href="/"><b>M F A U T H</b></a></li>
             {% if current_user.is_authenticated %}
               <li><a href="/settings">Settings</a></li>
               <li><a href="/logout">Logout</a></li>
             {% else %}
-              <li><a href="/login">Login</a></li>
-              <li><a href="/register">Register</a></li>
+              <li ><a href="/login">Login</a></li>
             {% endif %}
           </ul>
-        </div><!--/.nav-collapse -->
-      </div>
+        </div>
     </nav>
     {% block content %}{% endblock %}
   </body>
