@@ -1,18 +1,19 @@
-from flask import Flask, render_template, request, abort, redirect, url_for, flash
+from flask import Flask, render_template, request, abort, redirect, url_for, flash, session
 from flask.ext.login import LoginManager, UserMixin, login_user, logout_user, login_required
 from flask.ext.sqlalchemy import SQLAlchemy
 import datetime, pyotp, base64, time, os, socket
+import cPickle as pickle
 from thread import *
 
-def create_header(username,email,ip,time):
-    s = '#####\n' + \
-        username + '\n' + \
-        email + '\n' + \
-        time + '\n' + \
-        ip + '\n' + \
-        'Mock\n' + \
-        '$$$$$'
-    return s
+def create_dictionary(username,email,time,lat,lon,auth_code):
+    
+    data = {'username': username,
+            'email': email,
+            'time': time,
+            'lat': lat,
+            'long': lon,
+            'auth_code': auth_code}
+    return data;
 
 
 DEBUG = False
@@ -38,7 +39,6 @@ except socket.error, msg:
     sys.exit();
 
 host = socket.gethostname() 
-port = 2327
 
 try:
     remote_ip = socket.gethostbyname(host)
@@ -46,7 +46,7 @@ except socket.gaierror:
     print 'Hostname could not be resolved. Exiting'
     sys.exit()
 
-s.connect((remote_ip,port))
+s.connect((remote_ip, 6321))
 print 'Socket connected to ' + host + ' on IP ' + remote_ip
  
 class User(db.Model, UserMixin):
@@ -89,8 +89,9 @@ def login():
         user = User.query.filter_by(username=username).filter_by(password=password)
         if user.count() == 1:
             email = user.one().email
-            header = create_header(username,email,'fdsfssd','fdsfs')
-            s.sendall(header)
+            dictionary = create_dictionary(username,email,'fdsfssd','fdsfs','fdf', None)
+            d = pickle.dumps(dictionary)
+            s.sendall(d)
             return redirect(url_for('key'))
         else:
             flash('Invalid login')
@@ -105,10 +106,16 @@ def key():
         return render_template('key.html')
     elif request.method == 'POST':
         key = request.form['txtKey']
-        if [pair for pair in code_list if pair[0] == key]:
+        dictionary = create_dictionary(None,None,None,None,None,key)
+        d = pickle.dumps(dictionary)
+        s.sendall(d)
+        authenticated = s.recv(4096)
+        if authenticated == 'Yes':
             login_user(user.one())
-            #flash('Welcome back {0}'.format(username))
-            return redirect(url_for('index'))
+        else:
+            return 'No'
+        #flash('Welcome back {0}'.format(username))
+        return redirect(url_for('index'))
         return 'error'
     else:
         return abort(405)
@@ -119,6 +126,6 @@ def index():
 
  
 if __name__ == '__main__':
-    port = int(os.getenv('PORT', 5000))
+    port = int(os.getenv('PORT', 5001))
     host = os.getenv('IP', '127.0.0.1')
     app.run(port=port, host=host)
