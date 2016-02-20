@@ -112,14 +112,14 @@ input[type="submit"] {
   font-size: 14px;
 }
 
-#login-form input[type="email"],
+#login-form input[type="text"],
 #login-form input[type="password"] {
   border: 1px solid #dcdcdc;
   padding: 12px 10px;
   width: 100%;
 }
 
-#login-form input[type="email"] {
+#login-form input[type="text"] {
   border-radius: 0px 0px 0 0;
 }
 
@@ -187,7 +187,7 @@ input[type="submit"] {
       <form action="/login" method="POST">
 
 
-        <input type="email" required value="Email"id="txtUsername" name="txtUsername" onBlur="if(this.value=='')this.value='Email'" onFocus="if(this.value=='Email')this.value='' "> <!-- JS because of IE support; better: placeholder="Email" -->
+        <input type="text" required value="Username"id="txtUsername" name="txtUsername" onBlur="if(this.value=='')this.value='Email'" onFocus="if(this.value=='Email')this.value='' "> <!-- JS because of IE support; better: placeholder="Email" -->
 
         <input type="password" required value="Password" id="txtPassword" name="txtPassword"onBlur="if(this.value=='')this.value='Password'" onFocus="if(this.value=='Password')this.value='' "> <!-- JS because of IE support; better: placeholder="Password" -->
 
