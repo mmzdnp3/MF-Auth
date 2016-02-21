@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block content %}
+<head>
+	<meta charset="utf-8">
+	<title>MFAuth - *PLACEHOLDER* Settings</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+	<script type="text/javascript" src='http://maps.google.com/maps/api/js?libraries=places'></script>
+	<script type=text/javascript src="{{url_for('static', filename='locationpicker.jquery.js') }}"></script>
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+	<script>
+	  $(function() {
+		$( "#accordion" ).accordion({
+		  collapsible: true
+		});
+	  });
+	</script>
+</head>
+<style>
+div.container4 {
+    height: 9em;
+    }
+div.container4 h1 {
+    margin: 0;
+    position: absolute;
+    top: 10%; 
+    left: 20%; 
+    font-size: 50px;
+    font-weight: bold;
+    margin-right: -50%;
+    transform: translate(-50%, -50%) }
+#accordion {
+	position: relative;
+	right: 10%;
+	-webkit-transform: scale(0.8); /* Safari */
+    transform: scale(0.8);
+}    
+</style>
+<body>
+	<nav class="fixed-nav-bar">
+        </div>
+          <ul >
+              <li><a  href="/"><b>M F A U T H</b></a></li>
+            {% if current_user.is_authenticated %}
+              <li><a class="active" href="/settings"><b>Settings</b></a></li>
+              <li><a href="/logout">Logout</a></li>
+            {% else %}
+              <li ><a href="/login"><b>Login</b></a></li>
+            {% endif %}
+          </ul>
+        </div>
+    </nav>
+<div class="jumbotron">
+	<div class="container">
+	  <div class=container4> 
+		  <h1>Authentication Settings for</h1> 
+	  </div>
+	</div>
+	
+	<div id="accordion">
+		
+		<h3>One-time Password</h3>
+		<div>
+			<form action="">
+				<input type="checkbox" name="onetime" value="enable"> Enable One-time Password Authentication
+			</form>
+		</div>
+		
+		<h3>Location Restrictions</h3>
+		<div>
+			<div class="form-horizontal">
+			<div class="form-group">
+				Location:
+				<div class="col-sm-5"><input type="text" class="form-control" id="us2-address"/></div>
+			</div>
+			<div class="form-group">
+				Radius:
+				<div class="col-sm-2"><input type="text" class="form-control" id="us2-radius"/></div>
+			</div>
+			<div id="us2" style="width: 550px; height: 400px;"></div>
+			<div class="m-t-small">
+				Lat.:
+				<div class="col-sm-1"><input type="text" class="form-control" style="width: 110px" id="us2-lat"/></div>
+				Long.:
+				<div class="col-sm-1"><input type="text" class="form-control" style="width: 110px" id="us2-lon"/></div>
+			</div>
+			</div>
+			<script>$('#us2').locationpicker({
+				location: {latitude: 33.953350, longitude: -117.396156},
+				radius: 0,
+				inputBinding: {
+					latitudeInput: $('#us2-lat'),
+					longitudeInput: $('#us2-lon'),
+					radiusInput: $('#us2-radius'),
+					locationNameInput: $('#us2-address')
+				},
+				enableAutocomplete: true
+			});</script>
+			<br>
+			<button type="button" onclick="">Add</button>
+			
+		</div>
+		
+		<h3>Time Restrictions</h3>
+		<div>
+			<ul>
+			  <li>List item one</li>
+			  <li>List item two</li>
+			  <li>List item three</li>
+			</ul>
+		</div>
+		<h3>Login History</h3>
+		<div>
+			<p>BLANK</p>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+</body>
