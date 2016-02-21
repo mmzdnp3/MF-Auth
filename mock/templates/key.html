@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+            <li><a href="/register">Register</b></a></li>
 <html>
 <head>
   <title>Security Login</title>
@@ -127,8 +128,8 @@ input[type="submit"] { cursor: pointer; }
 
 #login-form input[type="code"]{
     border: 1px solid #dcdcdc;
-    padding: 12px 0px;
-    width: 100%;
+    padding: 12px 10px;
+    width: 94%;
 }
 
 #login-form input[type="code"] {
@@ -169,7 +170,7 @@ input[type="submit"] { cursor: pointer; }
         </div>
           <ul >
             <li><a  href="/"><b>Mock Site</b></a></li>
-            <li><a href="/register">Register</a></li>
+            <li><a href="/register">Register</b></a></li>
             {% if current_user.is_authenticated %}
             <li><a href="/logout">Logout</a></li>
             {% else %}
@@ -184,7 +185,7 @@ input[type="submit"] { cursor: pointer; }
         <fieldset>
         <form action="/key" method="POST">
             <h1>Please enter the authorization code from your email below:</h1>
-            <input type="code" required value="" id="txtKey" name="txtKey" onBlur="if(this.value=='')this.value='code'" onFocus="if(this.value=='code')this.value='' "> <!-- JS because of IE support; better: placeholder="Email" -->
+            <input type="code" required value="" id="txtKey" name="txtKey"> 
             <center><input type="submit" value="Submit Code"></center>
 
             <footer class="clearfix">
