@@ -61,6 +61,7 @@ li a.active {
     </div>
       <ul >
         <li><a class="active" href="/"><b>Mock Site</b></a></li>
+        <li><a href="/register">Register</a></li>
         {% if current_user.is_authenticated %}
         <li><a href="/logout">Logout</a></li>
         {% else %}
