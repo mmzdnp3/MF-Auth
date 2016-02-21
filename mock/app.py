@@ -80,7 +80,6 @@ def logout():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     global user
-    print '<1>'
     if request.method == 'GET':
         return render_template('login.html')
     elif request.method == 'POST':
@@ -103,6 +102,8 @@ def login():
 def key():
     global user
     if request.method == 'GET':
+        if request.referrer != request.url_root + 'login':
+            return redirect(url_for('login'))
         return render_template('key.html')
     elif request.method == 'POST':
         key = request.form['txtKey']
