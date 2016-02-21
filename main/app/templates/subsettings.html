@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
 <head>
-	<meta charset="utf-8">
-	<title>MFAuth - *PLACEHOLDER* Settings</title>
+
+	<title>MFAuth - {{service}} Preferences</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 	<script type="text/javascript" src='http://maps.google.com/maps/api/js?libraries=places'></script>
 	<script type=text/javascript src="{{url_for('static', filename='locationpicker.jquery.js') }}"></script>
@@ -11,7 +11,8 @@
 	<script>
 	  $(function() {
 		$( "#accordion" ).accordion({
-		  collapsible: true
+			heightStyle: "content",
+			collapsible: true
 		});
 	  });
 	</script>
@@ -31,10 +32,96 @@ div.container4 h1 {
     transform: translate(-50%, -50%) }
 #accordion {
 	position: relative;
-	right: 10%;
-	-webkit-transform: scale(0.8); /* Safari */
-    transform: scale(0.8);
-}    
+	right: 0%;
+	/*-webkit-transform: scale(0.8);*/ /* Safari */
+    /*transform: scale(0.9);*/
+}
+#time-range p {
+    font-family:"Arial", sans-serif;
+    font-size:14px;
+    color:#333;
+}
+.ui-slider-horizontal {
+    height: 8px;
+    background: #D7D7D7;
+    border: 1px solid #BABABA;
+    box-shadow: 0 1px 0 #FFF, 0 1px 0 #CFCFCF inset;
+    clear: both;
+    margin: 8px 0;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    -ms-border-radius: 6px;
+    -o-border-radius: 6px;
+    border-radius: 6px;
+}
+.ui-slider {
+    position: relative;
+    text-align: left;
+}
+.ui-slider-horizontal .ui-slider-range {
+    top: -1px;
+    height: 100%;
+}
+.ui-slider .ui-slider-range {
+    position: absolute;
+    z-index: 1;
+    height: 8px;
+    font-size: .7em;
+    display: block;
+    border: 1px solid #5BA8E1;
+    box-shadow: 0 1px 0 #AAD6F6 inset;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    -khtml-border-radius: 6px;
+    border-radius: 6px;
+    background: #81B8F3;
+    background-size: 100%;
+}
+.ui-slider .ui-slider-handle {
+    border-radius: 50%;
+    background: #F9FBFA;
+    background-size: 100%;
+    width: 22px;
+    height: 22px;
+    -webkit-box-shadow: 0 2px 3px -1px rgba(0, 0, 0, 0.6), 0 -1px 0 1px rgba(0, 0, 0, 0.15) inset, 0 1px 0 1px rgba(255, 255, 255, 0.9) inset;
+    -moz-box-shadow: 0 2px 3px -1px rgba(0, 0, 0, 0.6), 0 -1px 0 1px rgba(0, 0, 0, 0.15) inset, 0 1px 0 1px rgba(255, 255, 255, 0.9) inset;
+    box-shadow: 0 2px 3px -1px rgba(0, 0, 0, 0.6), 0 -1px 0 1px rgba(0, 0, 0, 0.15) inset, 0 1px 0 1px rgba(255, 255, 255, 0.9) inset;
+    -webkit-transition: box-shadow .3s;
+    -moz-transition: box-shadow .3s;
+    -o-transition: box-shadow .3s;
+    transition: box-shadow .3s;
+}
+.ui-slider .ui-slider-handle {
+    position: absolute;
+    z-index: 2;
+    width: 22px;
+    height: 22px;
+    cursor: default;
+    border: none;
+    cursor: pointer;
+}
+.ui-slider .ui-slider-handle:after {
+    content:"";
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    top: 50%;
+    margin-top: -4px;
+    left: 50%;
+    margin-left: -4px;
+    background: #30A2D2;
+    -webkit-box-shadow: 0 1px 1px 1px rgba(22, 73, 163, 0.7) inset, 0 1px 0 0 #FFF;
+    -moz-box-shadow: 0 1px 1px 1px rgba(22, 73, 163, 0.7) inset, 0 1px 0 0 white;
+    box-shadow: 0 1px 1px 1px rgba(22, 73, 163, 0.7) inset, 0 1px 0 0 #FFF;
+}
+.ui-slider-horizontal .ui-slider-handle {
+    top: -.5em;
+    margin-left: -.6em;
+}
+.ui-slider a:focus {
+    outline:none;
+}
 </style>
 <body>
 	<nav class="fixed-nav-bar">
@@ -53,17 +140,18 @@ div.container4 h1 {
 <div class="jumbotron">
 	<div class="container">
 	  <div class=container4> 
-		  <h1>Authentication Settings for</h1> 
+		  <h1>Preferences for {{service}}</h1> 
 	  </div>
 	</div>
+	
+	<form action="{{url_for('subsettings',service=service)}}" method="POST">
+	<input type="submit" value="Save preferences">
 	
 	<div id="accordion">
 		
 		<h3>One-time Password</h3>
 		<div>
-			<form action="">
-				<input type="checkbox" name="onetime" value="enable"> Enable One-time Password Authentication
-			</form>
+			<input type="checkbox" id="onetime" name="onetime" value="enable"> Enable One-time Password Authentication
 		</div>
 		
 		<h3>Location Restrictions</h3>
@@ -103,17 +191,83 @@ div.container4 h1 {
 		
 		<h3>Time Restrictions</h3>
 		<div>
-			<ul>
-			  <li>List item one</li>
-			  <li>List item two</li>
-			  <li>List item three</li>
-			</ul>
+			<div id="time-range">
+				<p>Time Range: <span class="slider-time">10:00 AM</span> - <span class="slider-time2">12:00 PM</span>
+
+				</p>
+				<div class="sliders_step1">
+					<div id="slider-range"></div>
+				</div>
+				
+				<br>
+				<button type="button" onclick="">Add</button>
+			</div>
+			<script>
+				$("#slider-range").slider({
+				range: true,
+				min: 0,
+				max: 1440,
+				step: 15,
+				values: [600, 720],
+				slide: function (e, ui) {
+					var hours1 = Math.floor(ui.values[0] / 60);
+					var minutes1 = ui.values[0] - (hours1 * 60);
+
+					if (hours1.length == 1) hours1 = '0' + hours1;
+					if (minutes1.length == 1) minutes1 = '0' + minutes1;
+					if (minutes1 == 0) minutes1 = '00';
+					if (hours1 >= 12) {
+						if (hours1 == 12) {
+							hours1 = hours1;
+							minutes1 = minutes1 + " PM";
+						} else {
+							hours1 = hours1 - 12;
+							minutes1 = minutes1 + " PM";
+						}
+					} else {
+						hours1 = hours1;
+						minutes1 = minutes1 + " AM";
+					}
+					if (hours1 == 0) {
+						hours1 = 12;
+						minutes1 = minutes1;
+					}
+					$('.slider-time').html(hours1 + ':' + minutes1);
+
+					var hours2 = Math.floor(ui.values[1] / 60);
+					var minutes2 = ui.values[1] - (hours2 * 60);
+
+					if (hours2.length == 1) hours2 = '0' + hours2;
+					if (minutes2.length == 1) minutes2 = '0' + minutes2;
+					if (minutes2 == 0) minutes2 = '00';
+					if (hours2 >= 12) {
+						if (hours2 == 12) {
+							hours2 = hours2;
+							minutes2 = minutes2 + " PM";
+						} else if (hours2 == 24) {
+							hours2 = 11;
+							minutes2 = "59 PM";
+						} else {
+							hours2 = hours2 - 12;
+							minutes2 = minutes2 + " PM";
+						}
+					} else {
+						hours2 = hours2;
+						minutes2 = minutes2 + " AM";
+					}
+
+					$('.slider-time2').html(hours2 + ':' + minutes2);
+				}
+			});</script>
 		</div>
+		
 		<h3>Login History</h3>
 		<div>
 			<p>BLANK</p>
 		</div>
+		
 	</div>
+	</form>
 </div>
 
 {% endblock %}

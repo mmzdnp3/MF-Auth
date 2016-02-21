@@ -20,6 +20,21 @@ def init_request():
 @login_required
 def settings():
     return render_template('settings.html')
+    
+@app.route('/settings/<service>', methods=['GET', 'POST'])
+@login_required
+def subsettings(service=None):
+	if request.method == 'GET':
+		return render_template('subsettings.html', service=service)
+	if request.method == 'POST':
+		user = User.query.filter_by(username=current_user.username).first()
+		if request.form.get('onetime', None):
+			user.onetimepass = 1;
+		else:
+			user.onetimepass = 0;
+		db.session.commit()
+	return render_template('subsettings.html', service=service)	
+			
 
 @app.route('/logout')
 def logout():

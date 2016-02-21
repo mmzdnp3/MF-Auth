@@ -1,4 +1,5 @@
 from app import db
+from sqlalchemy.dialects.mysql import TINYINT
 
 class User(db.Model):
     __tablename__ = 'accounts'
@@ -6,6 +7,7 @@ class User(db.Model):
     username = db.Column(db.String(45))
     password = db.Column(db.String(45))
     email = db.Column(db.String(45))
+    onetimepass = db.Column(TINYINT(1))
 
     @property
     def is_authenticated(self):
