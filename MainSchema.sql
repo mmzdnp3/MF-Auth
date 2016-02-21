@@ -128,10 +128,12 @@ DROP TABLE IF EXISTS `user_time`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user_time` (
-  `id` int(10) unsigned NOT NULL,
+  `user_id` int(10) unsigned NOT NULL,
   `timepref_id` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`id`,`timepref_id`),
-  KEY `timepref_id_idx` (`timepref_id`)
+  PRIMARY KEY (`user_id`,`timepref_id`),
+  KEY `timepref_id_idx` (`timepref_id`),
+  CONSTRAINT `timepref_id` FOREIGN KEY (`timepref_id`) REFERENCES `time_pref` (`timepref_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `accounts` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -153,4 +155,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-02-20 21:58:39
+-- Dump completed on 2016-02-20 22:50:12
