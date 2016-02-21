@@ -1,21 +1,112 @@
 {% extends 'base.html' %}
 {% block content %}
-<style>
+<!DOCTYPE html>
+<html >
+  <head>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+    
+  /* ---------- GENERAL ---------- */
+
+body {
+  background: #2f3842;
+  color: #999;
+ font-family: "Helvetica Neue", Helvetica, sans-serif;
+  margin: 0;
+}
+
+input {
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+input[type="preferences"]
+{
+  cursor: pointer;
+}
+
+input[type="preferences"]:hover {
+  background: #198d98;
+}
+
+
+input:focus {
+  outline: none;
+}
+
+input[type="submit"] {
+  cursor: pointer;
+  background: #1dabb8;
+  border-radius: 0px;
+   margin-top: 1px;
+     margin-right: 2px;
+  color: #fff;
+  padding: 12px 20px;
+  position:absolute;
+  top:100px;
+  right:40px;
+
+}
+
+input[type="submit"]:hover {
+  background: #198d98;
+}
+
 div.container4 {
-    height: 45em;
+    height: 15em;
     position: relative }
 div.container4 p {
     margin: 0;
     position: absolute;
-    top: 50%; 
-    left: 50%; 
-    font-size: 100px;
-    font-weight: bold;
-    margin-right: -50%;
-    transform: translate(-50%, -50%) }
- </style>
-<body>
-	<nav class="fixed-nav-bar">
+    top: 30%; 
+    left: 10%; 
+    color: #fff;
+    font-weight: lighter;
+    font-size: 50px;
+
+    margin-right: -90%;
+    transform: translate(-40%, 20%) }
+
+table, td, th {   
+    color: #000; 
+    text-align: left;
+
+
+}
+
+table {
+    border-collapse: collapse;
+    width: 93%;
+    position:absolute;
+    top:200px;
+    right:40px;
+
+}
+
+th, td {
+    padding: 10px;
+    font-size: 14px;
+    background-color: #fff;
+    border-bottom: 1px solid #B2B2B2;
+  
+}
+
+th {
+  font-size: 12px;
+}
+
+
+</style>
+    
+  </head>
+
+  <body>
+ <nav class="fixed-nav-bar">
         </div>
           <ul >
               <li><a  href="/"><b>M F A U T H</b></a></li>
@@ -23,15 +114,49 @@ div.container4 p {
               <li><a class="active" href="/settings"><b>Settings</b></a></li>
               <li><a href="/logout">Logout</a></li>
             {% else %}
-              <li ><a href="/login"><b>Login</b></a></li>
+              <li ><a href="/login">Login</a></li>
             {% endif %}
           </ul>
         </div>
     </nav>
-<div class="jumbotron">
-  <div class="container">
-  <div class=container4> <p>SETTINGS </div>
+
+  <div class=container4> <p>Settings</div>
+
+  <div id="input">
+      <form action="/login" method="POST">
+       <input type="submit" value="+  Add a new web service">
+      </form>
   </div>
-</div>
+
+
+<table>
+  <tr>
+    <th>Service</th>
+    <th>Preferences</th>
+    <th>Remove</th>
+  </tr>
+  <tr>
+    <td>Bank of America</td>
+    <td><a class="btn" href="#"><i class="fa fa-cog fa-lg" style="color:#198d98"></i></a></td>
+    <td><a class="btn" href="#"><i class="fa fa-times fa-lg" style="color:#198d98"></i></a></td>
+      </tr>
+  <tr>
+    <td>Facebook</td>
+    <td><a class="btn" href="#"><i class="fa fa-cog fa-lg" style="color:#198d98"></i></a></td>
+    <td><a class="btn" href="#"><i class="fa fa-times fa-lg" style="color:#198d98"></i></a></td>
+  </tr>
+  <tr>
+    <td>Twitter</td>
+    <td><a class="btn" href="#"><i class="fa fa-cog fa-lg" style="color:#198d98"></i></a></td>
+    <td><a class="btn" href="#"><i class="fa fa-times fa-lg" style="color:#198d98"></i></a></td>
+  </tr>
+  <tr>
+    <td>Tumblr</td>
+    <td><a class="btn" href="#"><i class="fa fa-cog fa-lg" style="color:#198d98"></i></a></td>
+    <td><a class="btn" href="#"><i class="fa fa-times fa-lg" style="color:#198d98"></i></a></td>
+</tr>
+</table>
+    
+  </body>
+</html>
 {% endblock %}
-</body>
