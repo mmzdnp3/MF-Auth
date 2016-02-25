@@ -27,7 +27,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'index'
-
  
 db = SQLAlchemy(app)
 user = None
@@ -85,10 +84,14 @@ def login():
     elif request.method == 'POST':
         username = request.form['txtUsername']
         password = request.form['txtPassword']
+        latitude = request.form['latitude']
+        longitude = request.form['longitude']
+        print latitude
+        print longitude
         user = User.query.filter_by(username=username).filter_by(password=password)
         if user.count() == 1:
             email = user.one().email
-            dictionary = create_dictionary(username,email,'fdsfssd','fdsfs','fdf', None)
+            dictionary = create_dictionary(username,email,'fdsfssd',latitude,longitude, None)
             d = pickle.dumps(dictionary)
             s.sendall(d)
             return redirect(url_for('key'))
