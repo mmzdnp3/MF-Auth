@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, abort, redirect, url_for, flash, session
+from flask import Flask, g, render_template, request, abort, redirect, url_for, flash, session
 from flask.ext.login import LoginManager, UserMixin, login_user, logout_user, login_required
 from flask.ext.sqlalchemy import SQLAlchemy
 import datetime, pyotp, base64, time, os, socket
@@ -117,7 +117,6 @@ def key():
             return 'No'
         #flash('Welcome back {0}'.format(username))
         return redirect(url_for('index'))
-        return 'error'
     else:
         return abort(405)
 
