@@ -6,8 +6,9 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
   <script type="text/javascript" src='http://maps.google.com/maps/api/js?libraries=places'></script>
   <script type=text/javascript src="{{url_for('static', filename='locationpicker.jquery.js') }}"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='jquery-ui.css') }}">
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='jquery-ui.css') }}">
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
 
   <script>
     $(function() {
@@ -17,6 +18,14 @@
     });
     });
   </script>
+
+    <script>
+    var deleteRow = function (link) {
+     var row = link.parentNode.parentNode;
+     var table = row.parentNode; 
+     table.removeChild(row); 
+ }
+     </script>
 </head>
 <style>
 body{
@@ -41,25 +50,26 @@ input[type="submit"] {
   color: #fff;
   padding: 7px 20px;
 }
-
-button:hover,
+.button:hover,
 input[type="submit"]:hover {
   background: #198d98;
 }
 
-button{
-  border: none;
+.button {
+  order: none;
   font-family: inherit;
   font-size: 12px;
+ color: white;
   font-weight: bold;
   margin: 0;
   -webkit-appearance: none;
   cursor: pointer;
   background: #1dabb8;
-  color: #fff;
   padding: 7px 20px;
-
+   text-decoration: none;
 }
+
+
 
 div.container4 {
     height: 15em;
@@ -83,7 +93,7 @@ div.container4 p {
   position: relative;
   margin: 0 auto;
   /*-webkit-transform: scale(0.8);*/ /* Safari */
-    transform: scale(0.95);
+/*    transform: scale(1);*/
   width: 800px;
 }
 
@@ -189,6 +199,84 @@ div.container4 p {
     outline:none;
 }
 
+table, td, th {   
+    color: #000; 
+    text-align: center;
+
+}
+
+table {
+ 
+    border-collapse: collapse;
+ /*   width: 91%;*/
+    width: 100%;
+    table-layout: fixed;
+    margin: 0 auto;
+
+
+
+/*    position: absolute;
+    top:200px;
+    right:40px;*/
+
+}
+
+th, td {
+    padding: 10px;
+    font-size: 14px;
+    background-color: #fff;
+    border-bottom: 1px solid #B2B2B2;
+  
+}
+
+th {
+  font-size: 12px;
+}
+
+
+.overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 0;
+}
+.overlay:target {
+  visibility: visible;
+  opacity: 1;
+}
+
+.popup {
+  margin: 70px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 5px;
+  width: 50%;
+  position: relative;
+}
+
+.popup .close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  transition: all 200ms;
+  font-size: 30px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+}
+.popup .close:hover {
+  color: #06D85F;
+}
+.popup .content {
+  max-height: 30%;
+
+}
+
 </style>
 <body>
   <nav class="fixed-nav-bar">
@@ -221,37 +309,26 @@ div.container4 p {
     
     <h3>Location Restrictions</h3>
     <div>
-      <div class="form-horizontal">
-      <div class="form-group">
-        Location:
-        <div class="col-sm-5"><input type="text" class="form-control" id="us2-address"/></div>
-      </div>
-      <div class="form-group">
-        Radius:
-        <div class="col-sm-2"><input type="text" class="form-control" id="us2-radius"/></div>
-      </div>
-      <div id="us2" style="width: 550px; height: 400px;"></div>
-      <div class="m-t-small">
-        Lat.:
-        <div class="col-sm-1"><input type="text" class="form-control" style="width: 110px" id="us2-lat"/></div>
-        Long.:
-        <div class="col-sm-1"><input type="text" class="form-control" style="width: 110px" id="us2-lon"/></div>
-      </div>
-      </div>
-      <script>$('#us2').locationpicker({
-        location: {latitude: 33.953350, longitude: -117.396156},
-        radius: 0,
-        inputBinding: {
-          latitudeInput: $('#us2-lat'),
-          longitudeInput: $('#us2-lon'),
-          radiusInput: $('#us2-radius'),
-          locationNameInput: $('#us2-address')
-        },
-        enableAutocomplete: true
-      });</script>
-      <br>
-      <input type="submit" value="Add"> 
-      <input type="submit" style="float:right" value="Save">     
+
+  <a class="button" href="#popup1" style="color:white">+ Add Location</a>
+  <br><br>
+
+  <table>
+  <tr>
+    <th>Location</th>
+    <th>Remove</th>
+  </tr>
+  <tr>
+    <td>Los Angeles, California</td>
+    <td><a class="btn"  onclick="javascript:deleteRow(this); return false;"><i class="fa fa-times fa-lg" style="color:#198d98"></i></a></td>
+  </tr>
+  <tr>
+    <td>Riverside, California</td>
+    <td><a class="btn" onclick="javascript:deleteRow(this); return false;"><i class="fa fa-times fa-lg" style="color:#198d98"></i></a></td>
+  </tr>
+
+  </table>
+<br><input type="submit" style="float:right" value="Save">
     </div>
     
     <h3>Time Restrictions</h3>
@@ -266,7 +343,6 @@ div.container4 p {
         
         <br>
         <input type="submit" value="Add"> 
-        <input type="submit" style="float:right" value="Save">
       </div>
       <script>
         $("#slider-range").slider({
@@ -331,9 +407,47 @@ div.container4 p {
     <div>
       <p>BLANK</p>
     </div>
+
     
   </div>
-    
+    <div id="popup1" class="overlay">
+  <div class="popup">
+    <a class="close" href="#">&times;</a>
+    <div class="content">
+       <div class="form-horizontal">
+      <div class="form-group">
+        Location:
+        <div class="col-sm-5"><input type="text" class="form-control" id="us2-address"/></div>
+      </div>
+      <div class="form-group">
+        Radius:
+        <div class="col-sm-2" ><input type="text" class="form-control" id="us2-radius"/></div>
+      </div>
+      <div id="us2" style="width: 550px; height: 400px; margin: 0 auto;"></div>
+     <!--  <div class="m-t-small">
+        Lat.:
+        <div class="col-sm-1"><input type="text" class="form-control" style="width: 110px" id="us2-lat"/></div>
+        Long.:
+        <div class="col-sm-1"><input type="text" class="form-control" style="width: 110px" id="us2-lon"/></div>
+      </div> -->
+      </div>
+      <script>$('#us2').locationpicker({
+        location: {latitude: 33.953350, longitude: -117.396156},
+        radius: 0,
+        inputBinding: {
+          latitudeInput: $('#us2-lat'),
+          longitudeInput: $('#us2-lon'),
+          radiusInput: $('#us2-radius'),
+          locationNameInput: $('#us2-address')
+        },
+        enableAutocomplete: true
+      });</script>
+      <br>
+      <input type="submit" value="Add"> 
+    </div>
+  </div>
+</div>
+
   </form>
 </div>
 
