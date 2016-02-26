@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, abort, redirect, url_for, flash, session
+from flask import Flask, g, render_template, request, abort, redirect, url_for, flash, session
 from flask.ext.login import LoginManager, UserMixin, login_user, logout_user, login_required
 from flask.ext.sqlalchemy import SQLAlchemy
 import datetime, pyotp, base64, time, os, socket
@@ -27,7 +27,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'index'
-
  
 db = SQLAlchemy(app)
 user = None
@@ -85,10 +84,14 @@ def login():
     elif request.method == 'POST':
         username = request.form['txtUsername']
         password = request.form['txtPassword']
+        latitude = request.form['latitude']
+        longitude = request.form['longitude']
+        print latitude
+        print longitude
         user = User.query.filter_by(username=username).filter_by(password=password)
         if user.count() == 1:
             email = user.one().email
-            dictionary = create_dictionary(username,email,'fdsfssd','fdsfs','fdf', None)
+            dictionary = create_dictionary(username,email,'fdsfssd',latitude,longitude, None)
             d = pickle.dumps(dictionary)
             s.sendall(d)
             return redirect(url_for('key'))
@@ -117,7 +120,6 @@ def key():
             return 'No'
         #flash('Welcome back {0}'.format(username))
         return redirect(url_for('index'))
-        return 'error'
     else:
         return abort(405)
 

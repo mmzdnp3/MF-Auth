@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 <html >
   <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <meta charset="UTF-8">
     <title>Login</title>
     <style>
@@ -163,6 +164,7 @@ input[type="submit"] {
   </head>
 
   <body>
+
  <nav class="fixed-nav-bar">
         </div>
           <ul >
@@ -183,14 +185,26 @@ input[type="submit"] {
     <h3>Mock Site</h3>
 
     <fieldset>
-
       <form action="/login" method="POST">
-
+        <script>
+          $(function(){
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    $('#latitude').val(position.coords.latitude);
+                    $('#longitude').val(position.coords.longitude);
+                    
+                });
+              } 
+          });
+        </script>
 
         <input type="text" required value="Username"id="txtUsername" name="txtUsername" onBlur="if(this.value=='')this.value='Username'" onFocus="if(this.value=='Username')this.value='' "> <!-- JS because of IE support; better: placeholder="Email" -->
 
         <input type="password" required value="Password" id="txtPassword" name="txtPassword"onBlur="if(this.value=='')this.value='Password'" onFocus="if(this.value=='Password')this.value='' "> <!-- JS because of IE support; better: placeholder="Password" -->
 
+        <input type="hidden" name="latitude" id="latitude" value="" />
+        <input type="hidden" name="longitude" id="longitude" value="" /> 
+        
         <input type="submit" value="Login">
 
         <footer class="clearfix">
