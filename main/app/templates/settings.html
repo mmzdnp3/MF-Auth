@@ -11,7 +11,40 @@
      var row = link.parentNode.parentNode;
      var table = row.parentNode; 
      table.removeChild(row); 
- }
+    }
+    function addRow(serviceName) {
+    var x = document.getElementById("Services").rows.length;
+    var table = document.getElementById("Services");
+    var row = table.insertRow(x);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(2);
+    cell1.innerHTML = serviceName;
+    cell2.innerHTML = '<a class="btn" href="/settings/bank-of-america"><i class="fa fa-cog fa-lg" style="color:#198d98"></i></a>';
+    cell3.innerHTML = '<a class="btn"  onclick="javascript:deleteRow(this); return false;"><i class="fa fa-times fa-lg" style="color:#198d98"></i></a>';
+    }
+
+    /* When the user clicks on the button, 
+    toggle between hiding and showing the dropdown content */
+    function myFunction() {
+        document.getElementById("myDropdown").classList.toggle("show");
+    }
+
+    // Close the dropdown if the user clicks outside of it
+    window.onclick = function(event) {
+      if (!event.target.matches('.dropbtn')) {
+
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+          var openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show')) {
+            openDropdown.classList.remove('show');
+          }
+        }
+      }
+    }
+
      </script>
 
 
@@ -62,9 +95,27 @@ input[type="submit"] {
   padding: 7px 20px;
 
 }
-
+.dropbtn:hover,
+.button:hover,
 input[type="submit"]:hover {
   background: #198d98;
+}
+
+.dropbtn,
+.button {
+  order: none;
+  font-family: inherit;
+  font-size: 12px;
+ color: white;
+  font-weight: bold;
+  margin: 0;
+  border: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  background: #1dabb8;
+  padding: 7px 20px;
+   text-decoration: none;
+    outline:0;
 }
 
 div.container4 {
@@ -91,19 +142,10 @@ table, td, th {
 }
 
 table {
- 
     border-collapse: collapse;
- /*   width: 91%;*/
-     width:  800px;
+    width:  800px;
     table-layout: fixed;
     margin: 0 auto;
-
-
-
-/*    position: absolute;
-    top:200px;
-    right:40px;*/
-
 }
 
 th, td {
@@ -119,11 +161,81 @@ th {
 }
 
 
-</style>
-    
-  </head>
+.overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 0;
+}
+.overlay:target {
+  visibility: visible;
+  opacity: 1;
+}
 
-  <body>
+.popup {
+  margin: 70px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 5px;
+  width: 15%;
+  position: relative;
+}
+
+.popup .close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 30px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+}
+.popup .close:hover {
+  color: #06D85F;
+}
+.popup .content {
+  max-height: 30%;
+
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+    outline:0;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    min-width: 200px;
+    overflow: auto;
+    font-size: 14px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 10px 16px;
+    text-decoration: none;
+    display: block;
+
+}
+
+.dropdown a:hover {background-color: #f1f1f1}
+
+.show {display:block;}
+</style>
+</head>
+
+
+<body>
  <nav class="fixed-nav-bar">
         </div>
           <ul >
@@ -138,27 +250,26 @@ th {
         </div>
     </nav>
 
-  <div class=container4> <p>Settings</div>
+<div class=container4> <p>Settings</div>
 
- 
-
-
-<table>
+<!-- TABLE -->
+<table id="Services">
   <tr>
     <th>
       <div id="input">
         <form action="/login" method="POST">
-          <input type="submit" style="float:left" value="+  Add a new web service">
+            <a class="button" href="#add-new-service" style="color:white; float:left;">+  Add new web service</a>
+          <!-- <input type="submit" style="float:left" value="+  Add a new web service"> -->
         </form>
       </div>
     </th>
     <th></th>
     <th>
-      <div id="input">
+<!--       <div id="input">
         <form action="/login" method="POST">
           <input type="submit" style="float:right" value="Save">
         </form>
-      </div>
+      </div> -->
     </th>
 </tr>
   <tr>
@@ -176,12 +287,26 @@ th {
     <td><a class="btn" href="/settings/Facebook"><i class="fa fa-cog fa-lg" style="color:#198d98"></i></a></td>
     <td><a class="btn" onclick="javascript:deleteRow(this); return false;"><i class="fa fa-times fa-lg" style="color:#198d98"></i></a></td>
   </tr>
-  
-
 </tr>
 </table>
 
-    
+ <!--    ADD NEW SERVICE -->
+   <div id="add-new-service" class="overlay">
+      <div class="popup">
+        <a class="close" href="#">&times;</a>
+        <div class="content">
+        <br><br><br>
+          <div class="dropdown">
+          <button onclick="myFunction()" class="dropbtn" style="width: 200px"><h style="float:left">Services</h><i class="fa fa-chevron-down" style="float:right"></i></button>
+            <div id="myDropdown" class="dropdown-content">
+              <a onclick="addRow('Reddit')">Reddit</a>
+              <a onclick="addRow('Paypal')">Paypal</a>
+              <a onclick="addRow('Youtube')">Youtube</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
 {% endblock %}

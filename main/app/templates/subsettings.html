@@ -12,11 +12,12 @@
 
   <script>
     $(function() {
-    $( "#accordion" ).accordion({
-      heightStyle: "content",
-      collapsible: true
+      $( "#accordion" ).accordion({
+        heightStyle: "content",
+        collapsible: true
+      });
     });
-    });
+    
   </script>
 
     <script>
@@ -24,7 +25,7 @@
      var row = link.parentNode.parentNode;
      var table = row.parentNode; 
      table.removeChild(row); 
- }
+    }
      </script>
 </head>
 <style>
@@ -50,6 +51,7 @@ input[type="submit"] {
   color: #fff;
   padding: 7px 20px;
 }
+
 .button:hover,
 input[type="submit"]:hover {
   background: #198d98;
@@ -263,7 +265,6 @@ th {
   position: absolute;
   top: 20px;
   right: 30px;
-  transition: all 200ms;
   font-size: 30px;
   font-weight: bold;
   text-decoration: none;
@@ -402,28 +403,21 @@ th {
         }
       });</script>
     </div>
-    
-    <h3>Login History</h3>
-    <div>
-      <p>BLANK</p>
-    </div>
-
-    
   </div>
     <div id="popup1" class="overlay">
-  <div class="popup">
-    <a class="close" href="#">&times;</a>
-    <div class="content">
-       <div class="form-horizontal">
-      <div class="form-group">
-        Location:
-        <div class="col-sm-5"><input type="text" class="form-control" id="us2-address"/></div>
-      </div>
-      <div class="form-group">
+      <div class="popup">
+        <a class="close" href="#">&times;</a>
+        <div class="content">
+        <div class="form-horizontal">
+        <div class="form-group">
+          Location:
+          <div class="col-sm-5"><input type="text" class="form-control" id="us2-address"/></div>
+        </div>
+        <div class="form-group">
         Radius:
-        <div class="col-sm-2" ><input type="text" class="form-control" id="us2-radius"/></div>
-      </div>
-      <div id="us2" style="width: 550px; height: 400px; margin: 0 auto;"></div>
+          <div class="col-sm-2" ><input type="text" class="form-control" id="us2-radius"/></div>
+        </div>
+        <div id="us2" style="width: 550px; height: 400px; margin: 0 auto;"></div>
      <!--  <div class="m-t-small">
         Lat.:
         <div class="col-sm-1"><input type="text" class="form-control" style="width: 110px" id="us2-lat"/></div>
@@ -441,13 +435,12 @@ th {
           locationNameInput: $('#us2-address')
         },
         enableAutocomplete: true
-      });</script>
+        });</script>
       <br>
       <input type="submit" value="Add"> 
+      </div>
+      </div>
     </div>
-  </div>
-</div>
-
   </form>
 </div>
 
