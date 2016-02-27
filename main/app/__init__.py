@@ -11,6 +11,10 @@ def read_client(conn):
     from .email import send_one_time
     while True:
         data = pickle.loads(conn.recv(4096))
+        # user = User.query.filter_by(username=data['username']).first()
+        # otp_en = user.onetimepass
+        #latpref = user.
+
         code = data['auth_code']
         if data['time'] is None:
             print 'checking code..'

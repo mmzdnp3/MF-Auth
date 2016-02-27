@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
     <meta charset="UTF-8">
     <title>Login</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <script>
     var deleteRow = function (link) {
      var row = link.parentNode.parentNode;
@@ -299,9 +300,29 @@ th {
           <div class="dropdown">
           <button onclick="myFunction()" class="dropbtn" style="width: 200px"><h style="float:left">Services</h><i class="fa fa-chevron-down" style="float:right"></i></button>
             <div id="myDropdown" class="dropdown-content">
-              <a onclick="addRow('Reddit')">Reddit</a>
-              <a onclick="addRow('Paypal')">Paypal</a>
-              <a onclick="addRow('Youtube')">Youtube</a>
+              <a onclick="addService('Reddit')">Reddit</a>
+              <a onclick="addService('Paypal')">Paypal</a>
+              <a onclick="addService('Youtube')">Youtube</a>
+              <script>
+                function addService(service)
+                {
+                  addRow(service);
+                  return $.ajax
+                  ({
+                      url:"/settings",
+                      type:'POST',
+                      contentType: 'application/json',
+                      data: JSON.stringify(service),
+                      dataType: 'json',
+                      success: function(e)
+                      {
+                        console.log(e);
+                      }
+
+                  });
+                }
+              </script>
+
             </div>
           </div>
         </div>

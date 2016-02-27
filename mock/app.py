@@ -18,7 +18,7 @@ def create_dictionary(username,email,time,lat,lon,auth_code):
 
 DEBUG = False
 SECRET_KEY = 'yekterces'
-SQLALCHEMY_DATABASE_URI = 'mysql://root:shadow@localhost:3306/mfauth'
+SQLALCHEMY_DATABASE_URI = 'mysql://root:shadow@localhost:3306/mock'
  
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -29,7 +29,6 @@ login_manager.init_app(app)
 login_manager.login_view = 'index'
  
 db = SQLAlchemy(app)
-user = None
 
 try:
     s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -48,12 +47,29 @@ except socket.gaierror:
 s.connect((remote_ip, 6321))
 print 'Socket connected to ' + host + ' on IP ' + remote_ip
  
-class User(db.Model, UserMixin):
-    __tablename__ = 'accounts'
+class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(45))
     password = db.Column(db.String(45))
     email = db.Column(db.String(45))
+
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_active(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        try:
+            return unicode(self.id)  # python 2
+        except NameError:
+            return str(self.id)  # python 3
 
 @login_manager.user_loader
 def user_loader(user_id):
@@ -78,7 +94,6 @@ def logout():
  
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    global user
     if request.method == 'GET':
         return render_template('login.html')
     elif request.method == 'POST':
@@ -90,20 +105,20 @@ def login():
         print longitude
         user = User.query.filter_by(username=username).filter_by(password=password)
         if user.count() == 1:
-            email = user.one().email
-            dictionary = create_dictionary(username,email,'fdsfssd',latitude,longitude, None)
+            user = user.one()
+            dictionary = create_dictionary(username,user.email,'fdsfssd',latitude,longitude, None)
             d = pickle.dumps(dictionary)
             s.sendall(d)
+            session['uid'] = user.get_id()
             return redirect(url_for('key'))
         else:
-            flash('Invalid login')
             return 'fail';
     else:
         return abort(405)
 
 @app.route('/key', methods=['GET', 'POST'])
 def key():
-    global user
+    user = user_loader(session['uid'])
     if request.method == 'GET':
         if request.referrer != request.url_root + 'login':
             return redirect(url_for('login'))
@@ -115,10 +130,9 @@ def key():
         s.sendall(d)
         authenticated = s.recv(4096)
         if authenticated == 'Yes':
-            login_user(user.one())
+            login_user(user)
         else:
-            return 'No'
-        #flash('Welcome back {0}'.format(username))
+            return 'fail'
         return redirect(url_for('index'))
     else:
         return abort(405)

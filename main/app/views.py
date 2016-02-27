@@ -16,11 +16,16 @@ def user_loader(user_id):
 def init_request():
     db.create_all()
 
-@app.route('/settings')
+@app.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():
-    return render_template('settings.html')
-    
+    if request.method == 'GET':
+        return render_template('settings.html')
+    if request.method == 'POST':
+        service = request.get_json(silent=True)
+        print service
+        return redirect(url_for('settings'))
+
 @app.route('/settings/<service>', methods=['GET', 'POST'])
 @login_required
 def subsettings(service=None):
