@@ -17,15 +17,25 @@
         collapsible: true
       });
     });
-    
-  </script>
 
-    <script>
     var deleteRow = function (link) {
      var row = link.parentNode.parentNode;
      var table = row.parentNode; 
      table.removeChild(row); 
     }
+
+    function addRow(location, radius) {
+    var x = document.getElementById("Locations").rows.length;
+    var table = document.getElementById("Locations");
+    var row = table.insertRow(x);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(2);
+    cell1.innerHTML = location;
+    cell2.innerHTML = radius;
+    cell3.innerHTML = '<a class="btn"  onclick="javascript:deleteRow(this); return false;"><i class="fa fa-times fa-lg" style="color:#198d98"></i></a>';
+    }
+
      </script>
 </head>
 <style>
@@ -69,6 +79,7 @@ input[type="submit"]:hover {
   background: #1dabb8;
   padding: 7px 20px;
    text-decoration: none;
+   outline: 0;
 }
 
 
@@ -301,30 +312,39 @@ th {
   <form action="{{url_for('subsettings',service=service)}}" method="POST">
   
   <div id="accordion">
+  
+
     
+<!--    OTP -->
     <h3>One-time Password</h3>
     <div>
       <input type="checkbox" id="onetime" name="onetime" value="enable"> Enable One-time Password Authentication
       <input type="submit" style="float:right; " value="Save">
     </div>
     
+
+
+<!--     LOCATION RESTRICTIONS -->
     <h3>Location Restrictions</h3>
     <div>
 
   <a class="button" href="#popup1" style="color:white">+ Add Location</a>
   <br><br>
 
-  <table>
+  <table id="Locations">
   <tr>
     <th>Location</th>
+    <th>Radius </th>
     <th>Remove</th>
   </tr>
   <tr>
     <td>Los Angeles, California</td>
+    <td></td>
     <td><a class="btn"  onclick="javascript:deleteRow(this); return false;"><i class="fa fa-times fa-lg" style="color:#198d98"></i></a></td>
   </tr>
   <tr>
     <td>Riverside, California</td>
+    <td></td>
     <td><a class="btn" onclick="javascript:deleteRow(this); return false;"><i class="fa fa-times fa-lg" style="color:#198d98"></i></a></td>
   </tr>
 
@@ -332,9 +352,61 @@ th {
 <br><input type="submit" style="float:right" value="Save">
     </div>
     
+
+
+<!--     TIME RESTRICTIONS -->
     <h3>Time Restrictions</h3>
     <div>
-      <div id="time-range">
+        <a class="button" href="#popup2" style="color:white">+ Time Restriction</a><br><br>
+      
+    </div>
+  </div>
+
+
+<!--   POPUP -->
+    <div id="popup1" class="overlay">
+      <div class="popup">
+        <a class="close" href="#">&times;</a>
+        <div class="content">
+        <div class="form-horizontal">
+        <div class="form-group">
+          Location:
+          <div class="col-sm-5"><input type="text" class="form-control" id="us2-address"/></div>
+        </div>
+        <div class="form-group">
+        Radius:
+          <div class="col-sm-2" ><input type="text" class="form-control" id="us2-radius"/></div>
+        </div>
+        <div id="us2" style="width: 550px; height: 400px; margin: 0 auto;"></div>
+     <!--  <div class="m-t-small">
+        Lat.:
+        <div class="col-sm-1"><input type="text" class="form-control" style="width: 110px" id="us2-lat"/></div>
+        Long.:
+        <div class="col-sm-1"><input type="text" class="form-control" style="width: 110px" id="us2-lon"/></div>
+      </div> -->
+      </div>
+      <script>$('#us2').locationpicker({
+        location: {latitude: 33.953350, longitude: -117.396156},
+        radius: 0,
+        inputBinding: {
+          latitudeInput: $('#us2-lat'),
+          longitudeInput: $('#us2-lon'),
+          radiusInput: $('#us2-radius'),
+          locationNameInput: $('#us2-address')
+        },
+        enableAutocomplete: true
+        });</script>
+      <br>
+       <a class="button"  onclick="addRow("locationNameInput", radiusInput)">Add</a>
+      </div>
+      </div>
+    </div>
+
+    <div id="popup2" class="overlay">
+      <div class="popup">
+        <a class="close" href="#">&times;</a>
+        <div class="content">
+          <div id="time-range">
         <p>Time Range: <span class="slider-time">10:00 AM</span> - <span class="slider-time2">12:00 PM</span>
 
         </p>
@@ -402,45 +474,13 @@ th {
           $('.slider-time2').html(hours2 + ':' + minutes2);
         }
       });</script>
-    </div>
-  </div>
-    <div id="popup1" class="overlay">
-      <div class="popup">
-        <a class="close" href="#">&times;</a>
-        <div class="content">
-        <div class="form-horizontal">
-        <div class="form-group">
-          Location:
-          <div class="col-sm-5"><input type="text" class="form-control" id="us2-address"/></div>
-        </div>
-        <div class="form-group">
-        Radius:
-          <div class="col-sm-2" ><input type="text" class="form-control" id="us2-radius"/></div>
-        </div>
-        <div id="us2" style="width: 550px; height: 400px; margin: 0 auto;"></div>
-     <!--  <div class="m-t-small">
-        Lat.:
-        <div class="col-sm-1"><input type="text" class="form-control" style="width: 110px" id="us2-lat"/></div>
-        Long.:
-        <div class="col-sm-1"><input type="text" class="form-control" style="width: 110px" id="us2-lon"/></div>
-      </div> -->
-      </div>
-      <script>$('#us2').locationpicker({
-        location: {latitude: 33.953350, longitude: -117.396156},
-        radius: 0,
-        inputBinding: {
-          latitudeInput: $('#us2-lat'),
-          longitudeInput: $('#us2-lon'),
-          radiusInput: $('#us2-radius'),
-          locationNameInput: $('#us2-address')
-        },
-        enableAutocomplete: true
-        });</script>
-      <br>
-      <input type="submit" value="Add"> 
       </div>
       </div>
     </div>
+
+
+
+
   </form>
 </div>
 
