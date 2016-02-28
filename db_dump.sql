@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `mfauth` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `mfauth`;
 -- MySQL dump 10.13  Distrib 5.7.9, for osx10.9 (x86_64)
 --
 -- Host: 127.0.0.1    Database: mfauth
@@ -136,7 +138,9 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-02-27 21:35:03
+-- Dump completed on 2016-02-27 21:51:02
+CREATE DATABASE  IF NOT EXISTS `mock` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `mock`;
 -- MySQL dump 10.13  Distrib 5.7.9, for osx10.9 (x86_64)
 --
 -- Host: 127.0.0.1    Database: mock
@@ -189,4 +193,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-02-27 21:35:03
+-- Dump completed on 2016-02-27 21:51:02
