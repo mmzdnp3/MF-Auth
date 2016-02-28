@@ -34,14 +34,14 @@ class Service(db.Model):
     name = db.Column(db.String(45))   
     onetimepass = db.Column(TINYINT(1))
     userid = db.Column(db.Integer, db.ForeignKey('user.id'))
-    location = db.relationship('Location', backref='service', lazy='dynamic')
-    time = db.relationship('Time', backref='service', lazy='dynamic')
+    locations = db.relationship('Location', backref='service', lazy='dynamic')
+    times = db.relationship('Time', backref='service', lazy='dynamic')
 
 
 class Location(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     latitude = db.Column(db.Float)
-    longtitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
     radius = db.Column(db.Float)
     allow = db.Column(db.Integer)
     serviceid = db.Column(db.Integer, db.ForeignKey('service.id'))

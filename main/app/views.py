@@ -3,7 +3,7 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 from flask.ext.sqlalchemy import SQLAlchemy
 from app import app, db,login_manager
 from .email import send_one_time
-from .models import User
+from .models import User, Service, Location, Time
 
 @login_manager.user_loader
 def user_loader(user_id):
@@ -20,6 +20,10 @@ def init_request():
 @login_required
 def settings():
     if request.method == 'GET':
+        user = User.query.filter_by(username=current_user.username).first()
+        locations = user.services.filter_by(name='Mock').first().locations.all()
+        for l in locations:
+            print '(' + str(l.latitude) + ', ' + str(l.longitude) + ') Allow: ' + str(l.allow)
         return render_template('settings.html')
     if request.method == 'POST':
         service = request.get_json(silent=True)

@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `mfauth` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `mfauth`;
 -- MySQL dump 10.13  Distrib 5.7.9, for osx10.9 (x86_64)
 --
 -- Host: 127.0.0.1    Database: mfauth
@@ -27,13 +25,14 @@ DROP TABLE IF EXISTS `location`;
 CREATE TABLE `location` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `latitude` float DEFAULT NULL,
-  `longtitude` float DEFAULT NULL,
+  `longitude` float DEFAULT NULL,
+  `radius` float DEFAULT NULL,
   `allow` int(11) DEFAULT NULL,
-  `userserviceid` int(11) DEFAULT NULL,
+  `serviceid` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `userserviceid` (`userserviceid`),
-  CONSTRAINT `location_ibfk_1` FOREIGN KEY (`userserviceid`) REFERENCES `userservice` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  KEY `serviceid` (`serviceid`),
+  CONSTRAINT `location_ibfk_1` FOREIGN KEY (`serviceid`) REFERENCES `service` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,6 +41,7 @@ CREATE TABLE `location` (
 
 LOCK TABLES `location` WRITE;
 /*!40000 ALTER TABLE `location` DISABLE KEYS */;
+INSERT INTO `location` VALUES (1,33.9843,-117.332,10000,1,1),(2,20.1298,-110.645,10000,1,1);
 /*!40000 ALTER TABLE `location` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -55,8 +55,12 @@ DROP TABLE IF EXISTS `service`;
 CREATE TABLE `service` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `onetimepass` tinyint(1) DEFAULT NULL,
+  `userid` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `userid` (`userid`),
+  CONSTRAINT `service_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -65,6 +69,7 @@ CREATE TABLE `service` (
 
 LOCK TABLES `service` WRITE;
 /*!40000 ALTER TABLE `service` DISABLE KEYS */;
+INSERT INTO `service` VALUES (1,'Mock',1,1);
 /*!40000 ALTER TABLE `service` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -80,10 +85,10 @@ CREATE TABLE `time` (
   `start` varchar(45) DEFAULT NULL,
   `end` varchar(45) DEFAULT NULL,
   `allow` int(11) DEFAULT NULL,
-  `userserviceid` int(11) DEFAULT NULL,
+  `serviceid` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `userserviceid` (`userserviceid`),
-  CONSTRAINT `time_ibfk_1` FOREIGN KEY (`userserviceid`) REFERENCES `userservice` (`id`)
+  KEY `serviceid` (`serviceid`),
+  CONSTRAINT `time_ibfk_1` FOREIGN KEY (`serviceid`) REFERENCES `service` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -108,7 +113,6 @@ CREATE TABLE `user` (
   `username` varchar(45) DEFAULT NULL,
   `password` varchar(45) DEFAULT NULL,
   `email` varchar(45) DEFAULT NULL,
-  `onetimepass` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -119,37 +123,8 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'ryan','123','ryanpholt@me.com',1),(2,'erikson','123','eriksontung@gmail.com',0),(3,'elaine','123','eleun003@ucr.edu',0);
+INSERT INTO `user` VALUES (1,'ryan','123','ryanpholt@me.com'),(2,'elaine','123','eleun003@ucr.edu'),(3,'erikson','123','eriksontung@gmail.com');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `userservice`
---
-
-DROP TABLE IF EXISTS `userservice`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `userservice` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `userid` int(11) DEFAULT NULL,
-  `serviceid` int(11) DEFAULT NULL,
-  `onetimepass` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `userid` (`userid`),
-  KEY `serviceid` (`serviceid`),
-  CONSTRAINT `userservice_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `user` (`id`),
-  CONSTRAINT `userservice_ibfk_2` FOREIGN KEY (`serviceid`) REFERENCES `service` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `userservice`
---
-
-LOCK TABLES `userservice` WRITE;
-/*!40000 ALTER TABLE `userservice` DISABLE KEYS */;
-/*!40000 ALTER TABLE `userservice` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -161,9 +136,7 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-02-27 10:36:52
-CREATE DATABASE  IF NOT EXISTS `mock` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `mock`;
+-- Dump completed on 2016-02-27 21:35:03
 -- MySQL dump 10.13  Distrib 5.7.9, for osx10.9 (x86_64)
 --
 -- Host: 127.0.0.1    Database: mock
@@ -216,4 +189,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-02-27 10:36:52
+-- Dump completed on 2016-02-27 21:35:03
