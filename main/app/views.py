@@ -19,23 +19,31 @@ def init_request():
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():
-    if request.method == 'GET':
-        user = User.query.filter_by(username=current_user.username).first()
-        locations = user.services.filter_by(name='Mock').first().locations.all()
-        for l in locations:
-            print '(' + str(l.latitude) + ', ' + str(l.longitude) + ') Allow: ' + str(l.allow)
-        return render_template('settings.html')
-    if request.method == 'POST':
-        data = request.get_json(silent=True)
-        if data['addremove'] == "add":
-			print "ADD NEW SERVICE" + data['servicename']
-			#newserv = Service(
-        return redirect(url_for('settings'))
+	if request.method == 'GET':
+		services = current_user.services.all()
+		return render_template('settings.html', serviceList=services)
+	if request.method == 'POST':
+		data = request.get_json(silent=True)
+		if data['addremove'] == "add":
+			serv = data['servicename']
+			newserv = Service(name=serv, onetimepass=0);
+			current_user.services.append(newserv)
+			db.session.commit()
+		if data['addremove'] == "remove":
+			serv = data['servicename']
+			delServ=Service.query.filter_by(name=serv, userid=current_user.id).first()
+			db.session.delete(delServ)
+			db.session.commit()
+		return redirect(url_for('settings'))
 
 @app.route('/settings/<service>', methods=['GET', 'POST'])
 @login_required
 def subsettings(service=None):
 	if request.method == 'GET':
+		#~ user = User.query.filter_by(username=current_user.username).first()
+		#~ locations = user.services.filter_by(name='Mock').first().locations.all()
+		#~ for l in locations:
+		#~ print '(' + str(l.latitude) + ', ' + str(l.longitude) + ') Allow: ' + str(l.allow)
 		return render_template('subsettings.html', service=service)
 	if request.method == 'POST':
 		user = User.query.filter_by(username=current_user.username).first()
