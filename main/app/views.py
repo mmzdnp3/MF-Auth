@@ -45,11 +45,29 @@ def subsettings(service=None):
 	if request.method == 'GET':
 		return render_template('subsettings.html', service=service, onetimepass=onetime, locationList=locations, timeList=times)
 	if request.method == 'POST':
-		if request.form.get('onetime', None):
-			serv.onetimepass = 1;
-		else:
-			serv.onetimepass = 0;
-		db.session.commit()
+		data = request.get_json(silent=True)
+		if data['type'] == "otp":
+			if data['enable'] == 1:
+				print "Enable OTP for " + service
+				serv.onetimepass = 1;
+			elif data['enable'] == 0:
+				print "Disable OTP for " + service
+				serv.onetimepass = 0;
+		elif data['type'] == "time":
+			begin = data['begintime']
+			end = data['endtime']
+			if data['addremove'] == "add":
+				print "Add time " + begin + " - " + end + " for " + service
+			elif data['addremove'] == "remove":
+				print "Remove time " + begin + " - " + end + " for " + service
+		elif data['type'] == "loc":
+			latitude = data['latitude']
+			longitude = data['longitude']
+			if data['addremove'] == "add":
+				print "Add loc " + str(latitude) + " - " + str(longitude) + " for " + service
+			elif data['addremove'] == "remove":
+				print "Remove loc " + str(latitude) + " - " + str(longitude) + " for " + service	
+		#~ db.session.commit()
 	return render_template('subsettings.html', service=service, onetimepass=onetime, locationList=locations, timeList=times)
 			
 
