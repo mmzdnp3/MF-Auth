@@ -20,10 +20,10 @@ def init_request():
 @login_required
 def settings():
     if request.method == 'GET':
-        user = User.query.filter_by(username=current_user.username).first()
-        locations = user.services.filter_by(name='Mock').first().locations.all()
-        for l in locations:
-            print '(' + str(l.latitude) + ', ' + str(l.longitude) + ') Allow: ' + str(l.allow)
+        # user = User.query.filter_by(username=current_user.username).first()
+        # locations = user.services.filter_by(name='Mock').first().locations.all()
+        # for l in locations:
+        #     print '(' + str(l.latitude) + ', ' + str(l.longitude) + ') Allow: ' + str(l.allow)
         return render_template('settings.html')
     if request.method == 'POST':
         data = request.get_json(silent=True)

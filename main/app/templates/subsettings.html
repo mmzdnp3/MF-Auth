@@ -24,7 +24,7 @@
      table.removeChild(row); 
     }
 
-    function addRow(location, radius) {
+    function addLocation(location, radius) {
     var x = document.getElementById("Locations").rows.length;
     var table = document.getElementById("Locations");
     var row = table.insertRow(x);
@@ -34,6 +34,16 @@
     cell1.innerHTML = location;
     cell2.innerHTML = radius;
     cell3.innerHTML = '<a class="btn"  onclick="javascript:deleteRow(this); return false;"><i class="fa fa-times fa-lg" style="color:#198d98"></i></a>';
+    }
+
+   function addTime(h1, m1, h2, m2) {
+    var x = document.getElementById("Times").rows.length;
+    var table = document.getElementById("Times");
+    var row = table.insertRow(x);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    cell1.innerHTML = h1 + ':' + m1 + ' - ' + h2 + ':' + m2;
+    cell2.innerHTML = '<a class="btn"  onclick="javascript:deleteRow(this); return false;"><i class="fa fa-times fa-lg" style="color:#198d98"></i></a>';
     }
 
      </script>
@@ -357,10 +367,20 @@ th {
 <!--     TIME RESTRICTIONS -->
     <h3>Time Restrictions</h3>
     <div>
-        <a class="button" href="#popup2" style="color:white">+ Time Restriction</a><br><br>
-      
-    </div>
+        <a class="button" href="#popup2" style="color:white">+ Time Range</a><br><br>
+      <table id="Times">
+  <tr>
+    <th>Time Range</th>
+    <th>Remove</th>
+  </tr>
+  <tr>
+    <td>5:00 - 6:00</td>
+    <td><a class="btn"  onclick="javascript:deleteRow(this); return false;"><i class="fa fa-times fa-lg" style="color:#198d98"></i></a></td>
+  </tr>
+  </table>
   </div>
+    </div>
+    
 
 
 <!--   POPUP -->
@@ -397,8 +417,8 @@ th {
         enableAutocomplete: true
         });</script>
       <br>
-       <a class="button"  onclick="addRow("locationNameInput", radiusInput)">Add</a>
-      </div>
+       <a class="button"  onclick="addLocation('0','0')">Add</a>
+      </div>l
       </div>
     </div>
 
@@ -406,7 +426,7 @@ th {
       <div class="popup">
         <a class="close" href="#">&times;</a>
         <div class="content">
-          <div id="time-range">
+           <div id="time-range">
         <p>Time Range: <span class="slider-time">10:00 AM</span> - <span class="slider-time2">12:00 PM</span>
 
         </p>
@@ -415,9 +435,10 @@ th {
         </div>
         
         <br>
-        <input type="submit" value="Add"> 
+        <a class="button"  onclick="addTime(hours1, minutes1, hours2, minutes2)">Add</a>
       </div>
-      <script>
+       <script>
+        var hours1, minutes1, hours2, minutes2;
         $("#slider-range").slider({
         range: true,
         min: 0,
@@ -425,8 +446,8 @@ th {
         step: 15,
         values: [600, 720],
         slide: function (e, ui) {
-          var hours1 = Math.floor(ui.values[0] / 60);
-          var minutes1 = ui.values[0] - (hours1 * 60);
+          hours1 = Math.floor(ui.values[0] / 60);
+          minutes1 = ui.values[0] - (hours1 * 60);
 
           if (hours1.length == 1) hours1 = '0' + hours1;
           if (minutes1.length == 1) minutes1 = '0' + minutes1;
@@ -449,8 +470,8 @@ th {
           }
           $('.slider-time').html(hours1 + ':' + minutes1);
 
-          var hours2 = Math.floor(ui.values[1] / 60);
-          var minutes2 = ui.values[1] - (hours2 * 60);
+          hours2 = Math.floor(ui.values[1] / 60);
+          minutes2 = ui.values[1] - (hours2 * 60);
 
           if (hours2.length == 1) hours2 = '0' + hours2;
           if (minutes2.length == 1) minutes2 = '0' + minutes2;
