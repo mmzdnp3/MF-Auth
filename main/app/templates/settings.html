@@ -312,7 +312,7 @@ th {
                       url:"/settings",
                       type:'POST',
                       contentType: 'application/json',
-                      data: JSON.stringify(service),
+                      data: JSON.stringify({servicename: service, addremove:"add"}),
                       dataType: 'json',
                       success: function(e)
                       {

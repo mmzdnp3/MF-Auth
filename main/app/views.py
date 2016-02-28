@@ -22,8 +22,10 @@ def settings():
     if request.method == 'GET':
         return render_template('settings.html')
     if request.method == 'POST':
-        service = request.get_json(silent=True)
-        print service
+        data = request.get_json(silent=True)
+        if data['addremove'] == "add":
+			print "ADD NEW SERVICE" + data['servicename']
+			newserv = Service(
         return redirect(url_for('settings'))
 
 @app.route('/settings/<service>', methods=['GET', 'POST'])
