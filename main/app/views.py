@@ -34,6 +34,7 @@ def settings():
 			delServ=Service.query.filter_by(name=serv, userid=current_user.id)
 			db.session.delete(delServ)
 			db.session.commit()
+		return redirect(url_for('settings'))	
 
 @app.route('/settings/<service>', methods=['GET', 'POST'])
 @login_required
