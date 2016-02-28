@@ -31,7 +31,7 @@ def settings():
 			db.session.commit()
 		if data['addremove'] == "remove":
 			serv = data['servicename']
-			delServ=Service.query.filter_by(name=serv, userid=current_user.id).first()
+			delServ=Service.query.filter_by(name=serv, userid=current_user.id)
 			db.session.delete(delServ)
 			db.session.commit()
 
@@ -45,11 +45,11 @@ def subsettings(service=None):
 		#~ print '(' + str(l.latitude) + ', ' + str(l.longitude) + ') Allow: ' + str(l.allow)
 		return render_template('subsettings.html', service=service)
 	if request.method == 'POST':
-		user = User.query.filter_by(username=current_user.username).first()
+		serv = Service.query.filter_by(name=service, userid=current_user.id).first()
 		if request.form.get('onetime', None):
-			user.onetimepass = 1;
+			serv.onetimepass = 1;
 		else:
-			user.onetimepass = 0;
+			serv.onetimepass = 0;
 		db.session.commit()
 	return render_template('subsettings.html', service=service)	
 			
