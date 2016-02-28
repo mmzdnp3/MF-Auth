@@ -13,18 +13,18 @@
      var table = row.parentNode; 
      table.removeChild(row); 
      /* AJAX FOR LETTING THE FLASK SERVER KNOW TO DELETE SERVICE RECORD */
-	return $.ajax
-		({
-		url:"/settings",
-		type:'POST',
-		contentType: 'application/json',
-		data: JSON.stringify({servicename: service, addremove:"remove"}),
-		dataType: 'json',
-		success: function(e)
-		{
-		console.log(e);
-		}
-		});
+		return $.ajax
+			({
+				url:"/settings",
+				type:'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({servicename: service, addremove:"remove"}),
+				dataType: 'json',
+				success: function(e)
+				{
+					console.log(e);
+				}
+			});
     }
     function addRow(serviceName) {
     var x = document.getElementById("Services").rows.length;
