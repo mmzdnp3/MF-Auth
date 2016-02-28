@@ -29,7 +29,7 @@ def settings():
         data = request.get_json(silent=True)
         if data['addremove'] == "add":
 			print "ADD NEW SERVICE" + data['servicename']
-			newserv = Service(
+			#newserv = Service(
         return redirect(url_for('settings'))
 
 @app.route('/settings/<service>', methods=['GET', 'POST'])
