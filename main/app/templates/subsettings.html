@@ -323,9 +323,8 @@ th {
       <p>Preferences for {{service}}</p>
     </div>
   
-  <form action="{{url_for('subsettings',service=service)}}" method="POST">
   
-  <div id="accordion">
+<div id="accordion">
   
 
     
@@ -333,7 +332,6 @@ th {
     <h3>One-time Password</h3>
     <div>
       <input type="checkbox" id="onetime" name="onetime" value="enable"> Enable One-time Password Authentication
-      <input type="submit" style="float:right; " value="Save">
     </div>
     
 
@@ -348,13 +346,31 @@ th {
   <table id="Locations">
   <tr>
     <th>Location</th>
+    <th>Latitude </th>
+    <th>Longitude </th>
     <th>Radius </th>
     <th>Enable </th>
     <th>Remove</th>
   </tr>
+  
+<!-- GENERATING TABLE BASED ON LOCATION LIST FROM DB -->
+  {% for loc in locationList %}
+  <tr>
+	  <td>PLACE HOLDER</td>
+	  <td>{{loc.latitude}}</td>
+	  <td>{{loc.longitude}}</td>
+	  <td>{{loc.radius}}</td>
+	  <td><input type="checkbox" id="onetime" name="onetime" value="enable"></td>
+	  <td><a class="btn" onclick="javascript:deleteRow(this); return false;">
+		 <i class="fa fa-minus-square" style="color:#1E90FF"></i></a></td>
+  </tr>
+  {% endfor %}
+  
+  
+  
   </table>
-<br><input type="submit" style="float:right" value="Save">
-    </div>
+   
+   </div>
     
 
 
@@ -368,6 +384,19 @@ th {
           <th>Enable</th>
           <th>Remove</th>
         </tr>
+        
+        
+        <!-- GENERATING TABLE BASED ON TIME LIST FROM DB -->
+		{% for time in timeList %}
+		<tr>
+		  <td>{{time.begin}} - {{time.end}}</td>
+		  <td><input type="checkbox" id="onetime" name="onetime" value="enable"></td>
+		  <td><a class="btn" onclick="javascript:deleteRow(this); return false;">
+			 <i class="fa fa-minus-square" style="color:#1E90FF"></i></a></td>
+		</tr>
+		{% endfor %}
+        
+        
         </table>
     </div>
   </div>
@@ -511,10 +540,6 @@ th {
       </div>
     </div>
 
-
-
-
-  </form>
 </div>
 
 {% endblock %}

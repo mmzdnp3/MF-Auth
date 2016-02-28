@@ -38,20 +38,19 @@ def settings():
 @app.route('/settings/<service>', methods=['GET', 'POST'])
 @login_required
 def subsettings(service=None):
+	serv = Service.query.filter_by(name=service,userid=current_user.id).first()
+	onetime = serv.onetimepass
+	locations = serv.locations.all()
+	times = serv.times.all()
 	if request.method == 'GET':
-		#~ user = User.query.filter_by(username=current_user.username).first()
-		#~ locations = user.services.filter_by(name='Mock').first().locations.all()
-		#~ for l in locations:
-		#~ print '(' + str(l.latitude) + ', ' + str(l.longitude) + ') Allow: ' + str(l.allow)
-		return render_template('subsettings.html', service=service)
+		return render_template('subsettings.html', service=service, onetimepass=onetime, locationList=locations, timeList=times)
 	if request.method == 'POST':
-		serv = Service.query.filter_by(name=service, userid=current_user.id).first()
 		if request.form.get('onetime', None):
 			serv.onetimepass = 1;
 		else:
 			serv.onetimepass = 0;
 		db.session.commit()
-	return render_template('subsettings.html', service=service)	
+	return render_template('subsettings.html', service=service, onetimepass=onetime, locationList=locations, timeList=times)
 			
 
 @app.route('/logout')
