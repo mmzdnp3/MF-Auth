@@ -24,7 +24,7 @@
      table.removeChild(row); 
     }
 
-    function addRow(location, radius) {
+    function addRowLoc(location, radius) {
     var x = document.getElementById("Locations").rows.length;
     var table = document.getElementById("Locations");
     var row = table.insertRow(x);
@@ -34,6 +34,16 @@
     cell1.innerHTML = location;
     cell2.innerHTML = radius;
     cell3.innerHTML = '<a class="btn"  onclick="javascript:deleteRow(this); return false;"><i class="fa fa-times fa-lg" style="color:#198d98"></i></a>';
+    }
+
+    function addRowTime(time) {
+    var x = document.getElementById("Times").rows.length;
+    var table = document.getElementById("Times");
+    var row = table.insertRow(x);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    cell1.innerHTML = time;
+    cell2.innerHTML = '<a class="btn"  onclick="javascript:deleteRow(this); return false;"><i class="fa fa-times fa-lg" style="color:#198d98"></i></a>';
     }
 
      </script>
@@ -347,7 +357,12 @@ th {
     <h3>Time Restrictions</h3>
     <div>
         <a class="button" href="#popup2" style="color:white">+ Time Restriction</a><br><br>
-      
+        <table id="Times">
+        <tr>
+          <th>Time Range</th>
+          <th>Remove</th>
+        </tr>
+        </table>
     </div>
   </div>
 
@@ -376,7 +391,7 @@ th {
       </div>
       <script>
         function addLocation() {
-          addRow(city + ", " + state, rad)
+          addRowLoc(city + ", " + state, rad)
         }  
       $('#us2').locationpicker({
         location: {latitude: 33.953350, longitude: -117.396156},
@@ -423,9 +438,13 @@ th {
         </div>
         
         <br>
-        <input type="submit" value="Add"> 
+        <a class="button"  onclick="addTime()">Add</a>
       </div>
       <script>
+       var hours1, minutes1, hours2, minutes2;
+       function addTime() {
+          addRowTime(hours1 + ':' + minutes1 + ' - ' + hours2 + ':' + minutes2);
+        } 
         $("#slider-range").slider({
         range: true,
         min: 0,
@@ -433,8 +452,8 @@ th {
         step: 15,
         values: [600, 720],
         slide: function (e, ui) {
-          var hours1 = Math.floor(ui.values[0] / 60);
-          var minutes1 = ui.values[0] - (hours1 * 60);
+          hours1 = Math.floor(ui.values[0] / 60);
+          minutes1 = ui.values[0] - (hours1 * 60);
 
           if (hours1.length == 1) hours1 = '0' + hours1;
           if (minutes1.length == 1) minutes1 = '0' + minutes1;
@@ -457,8 +476,8 @@ th {
           }
           $('.slider-time').html(hours1 + ':' + minutes1);
 
-          var hours2 = Math.floor(ui.values[1] / 60);
-          var minutes2 = ui.values[1] - (hours2 * 60);
+          hours2 = Math.floor(ui.values[1] / 60);
+          minutes2 = ui.values[1] - (hours2 * 60);
 
           if (hours2.length == 1) hours2 = '0' + hours2;
           if (minutes2.length == 1) minutes2 = '0' + minutes2;
