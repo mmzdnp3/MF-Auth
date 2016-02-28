@@ -337,17 +337,6 @@ th {
     <th>Radius </th>
     <th>Remove</th>
   </tr>
-  <tr>
-    <td>Los Angeles, California</td>
-    <td></td>
-    <td><a class="btn"  onclick="javascript:deleteRow(this); return false;"><i class="fa fa-times fa-lg" style="color:#198d98"></i></a></td>
-  </tr>
-  <tr>
-    <td>Riverside, California</td>
-    <td></td>
-    <td><a class="btn" onclick="javascript:deleteRow(this); return false;"><i class="fa fa-times fa-lg" style="color:#198d98"></i></a></td>
-  </tr>
-
   </table>
 <br><input type="submit" style="float:right" value="Save">
     </div>
@@ -385,7 +374,11 @@ th {
         <div class="col-sm-1"><input type="text" class="form-control" style="width: 110px" id="us2-lon"/></div>
       </div> -->
       </div>
-      <script>$('#us2').locationpicker({
+      <script>
+        function addLocation() {
+          addRow(city + ", " + state, rad)
+        }  
+      $('#us2').locationpicker({
         location: {latitude: 33.953350, longitude: -117.396156},
         radius: 0,
         inputBinding: {
@@ -394,10 +387,25 @@ th {
           radiusInput: $('#us2-radius'),
           locationNameInput: $('#us2-address')
         },
-        enableAutocomplete: true
-        });</script>
+        enableAutocomplete: true,
+        onchanged: function (currentLocation, radius, isMarkerDropped) {
+          city =  $(this).locationpicker('map').location.addressComponents.city
+          state =  $(this).locationpicker('map').location.addressComponents.stateOrProvince
+          lat = currentLocation.latitude
+          long = currentLocation.longitude  
+          rad = radius 
+        },
+        oninitialized: function(component) {
+          city = $(component).locationpicker('map').location.addressComponents.city
+          state = $(component).locationpicker('map').location.addressComponents.stateOrProvince
+          lat = $(component).locationpicker('map').location.latitude
+          long = $(component).locationpicker('map').location.latitude
+          rad = 0
+        }    
+        });
+        </script>
       <br>
-       <a class="button"  onclick="addRow("locationNameInput", radiusInput)">Add</a>
+       <a class="button"  onclick="addLocation()">Add</a>
       </div>
       </div>
     </div>
