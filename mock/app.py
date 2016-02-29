@@ -70,7 +70,22 @@ def login():
         user = User.query.filter_by(username=username).filter_by(password=password)
         if user.count() == 1:  
             user = user.one()
-            session['uid'] = user.get_id()  
+            session['uid'] = user.get_id()
+
+            time = 1
+            d = json.dumps({'username' : username, 'service' : 'mock', 'latitude' : latitude, \
+                            'longitude' : longitude, 'time' : time})
+
+            print d
+
+            url = 'http://localhost:5000/api/verify_login'
+            req = urllib2.Request(url, d, {'Content-Type' : 'application/json', 'Content-Length' : len(d)})
+            response = urllib2.urlopen(req)
+            data = json.loads(response.read())
+            print data['success']
+
+
+
             response = urllib2.urlopen('http://localhost:5000/api/get_otp_en/mock/' + username)
             data = json.loads(response.read())
             if data['otp_en'] == 1:

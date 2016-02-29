@@ -43,30 +43,57 @@ def verify_otp():
     if [pair for pair in code_list if pair[0] == otp]:
         return jsonify({'success' : 1})
     else:
-       return jsonify({'success' : 0}) 
+       return jsonify({'success' : 0})
+
+@app.route('/api/verify_login', methods=['POST'])
+def verify_login():
+    if not 'username' in request.json:
+        print '<1>'
+        abort(400)
+    if not 'service' in request.json:
+        print '<2>'
+        abort(400)
+    if not 'latitude' in request.json:
+        print '<3>'
+        abort(400)
+    if not 'longitude' in request.json:
+        print '<4>'
+        abort(400)
+    if not 'time' in request.json:
+        print '<5>'
+        abort(400) 
+
+    print '<6>'
+
+    username = request.json['username']
+    service = request.json['service']
+    latitude = request.json['latitude']
+    longitude = request.json['longitude']
+    time = request.json['time']
+
+    print '<7>'
+    user = User.query.filter_by(username=username)
+    if user.count() != 1:
+        abort(404)
+
+    # serv = user.first().services.filter_by(name=service) 
+    # if serv.count() != 1:
+    #     abort(404)
+
+    # locations = serv.locations.all()
+    # times = serv.times.all()
+
+    # for loc in locations:
+    #     print loc
+
+    #if verified:
+    return jsonify({'success' : 1})
+    #else:
+    #   return jsonify({'success' : 0}) 
 
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
-
-    # locations = serv.locations.all()
-    # times = serv.times.all()
-    # location_list = []
-    # time_list = []
-    # for location in locations:
-    #     location_list.append( (location.latitude, location.longitude, location.radius, location.allow) )
-    # for time in times:
-    #     time_list.append( (time.start, time.end) )
-
-
-@app.route('/api/verify/', methods=['POST'])
-def verify(service, username):
-    if not request.json:
-        abort(400)
-    service = request.json['service']
-    username = request.json['username']
-    code = request.json['code']
-    location = request.json['location']
 
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required
