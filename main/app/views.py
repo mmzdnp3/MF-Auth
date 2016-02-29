@@ -121,8 +121,10 @@ def subsettings(service=None):
 	onetime = serv.onetimepass
 	locations = serv.locations.all()
 	times = serv.times.all()
+	
 	if request.method == 'GET':
 		return render_template('subsettings.html', service=service, onetimepass=onetime, locationList=locations, timeList=times)
+		
 	if request.method == 'POST':
 		data = request.get_json(silent=True)
 		if data['type'] == "otp":
@@ -132,9 +134,18 @@ def subsettings(service=None):
 			elif data['enable'] == 0:
 				print "Disabled OTP for " + service
 				serv.onetimepass = 0;
+		
 		elif data['type'] == "time":
 			begin = data['begintime']
 			end = data['endtime']
+			if data['addremove'] == "check":
+				time = Time.query.filter_by(start=begin,end=end,serviceid=serv.id).first()
+				if data['allow'] == 1:
+					print "Allow login for " + begin + " - " + end + " for " + service
+					time.allow = 1;
+				elif data['allow'] == 0:
+					time.allow = 0;
+					print "Disallow login for " + begin + " - " + end + " for " + service
 			if data['addremove'] == "add":
 				newtime = Time(start=begin,end=end,allow=0);
 				serv.times.append(newtime);
@@ -142,17 +153,27 @@ def subsettings(service=None):
 			elif data['addremove'] == "remove":
 				Time.query.filter_by(start=begin,end=end,serviceid=serv.id).delete()
 				print "Removed time " + begin + " - " + end + " for " + service
+		
 		elif data['type'] == "loc":
 			latitude = data['latitude']
 			longitude = data['longitude']
 			radius = data['radius']
+			if data['addremove'] == "check":
+				loc = Location.query.filter_by(latitude=latitude,longitude=longitude,serviceid=serv.id).first()
+				if data['allow'] == 1:
+					print "Allow login for "+ str(latitude) + ", " + str(longitude) + " Radius: " + str(radius) + " for " + service
+					loc.allow = 1;
+				elif data['allow'] == 0:
+					loc.allow = 0;
+					print "Disallow login for "+ str(latitude) + ", " + str(longitude) + " Radius: " + str(radius) + " for " + service
 			if data['addremove'] == "add":
 				newloc = Location(latitude=latitude,longitude=longitude,radius=radius,allow=0);
 				serv.locations.append(newloc);
 				print "Added loc " + str(latitude) + ", " + str(longitude) + " Radius: " + str(radius) + " for " + service
 			elif data['addremove'] == "remove":
 				Location.query.filter_by(latitude=latitude,longitude=longitude,radius=radius,serviceid=serv.id).delete()
-				print "Removed loc " + str(latitude) + ", " + str(longitude) + " Radius: " + str(radius) + " for " + service	
+				print "Removed loc " + str(latitude) + ", " + str(longitude) + " Radius: " + str(radius) + " for " + service
+				
 		db.session.commit()
 	return render_template('subsettings.html', service=service, onetimepass=onetime, locationList=locations, timeList=times)
 			
