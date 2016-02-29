@@ -38,7 +38,7 @@
 			}
 		}); 
     }
-    var deleteLocRow = function (link, latitude, longitude)
+    var deleteLocRow = function (link, latitude, longitude, radius)
     {
 		var row = link.parentNode.parentNode;
 		var table = row.parentNode; 
@@ -49,7 +49,7 @@
 			url:"/settings/{{service}}",
 			type:'POST',
 			contentType: 'application/json',
-			data: JSON.stringify({type: "loc", latitude: latitude, longitude: longitude, addremove:"remove"}),
+			data: JSON.stringify({type: "loc", latitude: latitude, longitude: longitude, radius: radius, addremove:"remove"}),
 			dataType: 'json',
 			success: function(e)
 			{
@@ -76,7 +76,7 @@
 		cell3.innerHTML = longitude;
 		cell4.innerHTML = radius;
 		cell5.innerHTML = '<input type="checkbox" id="onetime" name="onetime" value="enable" >';
-		cell6.innerHTML = '<a class="btn"  onclick="javascript:deleteLocRow(this, '+latitude+', '+longitude+'); return false;"><i class="fa fa-minus-square" style="color:#1E90FF"></i></a>';
+		cell6.innerHTML = '<a class="btn"  onclick="javascript:deleteLocRow(this, '+latitude+', '+longitude+','+radius+'); return false;"><i class="fa fa-minus-square" style="color:#1E90FF"></i></a>';
     }
 
     function addRowTime(begin, end)
@@ -435,7 +435,7 @@ th {
 	  <td>{{loc.longitude}}</td>
 	  <td>{{loc.radius}}</td>
 	  <td><input type="checkbox" id="onetime" name="onetime" value="enable"></td>
-	  <td><a class="btn" onclick="javascript:deleteLocRow(this, {{loc.latitude}}, {{loc.longitude}}); return false;">
+	  <td><a class="btn" onclick="javascript:deleteLocRow(this, {{loc.latitude}}, {{loc.longitude}}, {{loc.radius}}); return false;">
 		 <i class="fa fa-minus-square" style="color:#1E90FF"></i></a></td>
   </tr>
   {% endfor %}
@@ -507,7 +507,7 @@ th {
 			  url:"/settings/{{service}}",
 			  type:'POST',
 			  contentType: 'application/json',
-			  data: JSON.stringify({type: "loc", latitude: lat, longitude: longitude, addremove:"add"}),
+			  data: JSON.stringify({type: "loc", latitude: lat, longitude: longitude, radius: rad, addremove:"add"}),
 			  dataType: 'json',
 			  success: function(e)
 			  {

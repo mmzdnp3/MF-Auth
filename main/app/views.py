@@ -48,26 +48,33 @@ def subsettings(service=None):
 		data = request.get_json(silent=True)
 		if data['type'] == "otp":
 			if data['enable'] == 1:
-				print "Enable OTP for " + service
+				print "Enabled OTP for " + service
 				serv.onetimepass = 1;
 			elif data['enable'] == 0:
-				print "Disable OTP for " + service
+				print "Disabled OTP for " + service
 				serv.onetimepass = 0;
 		elif data['type'] == "time":
 			begin = data['begintime']
 			end = data['endtime']
 			if data['addremove'] == "add":
-				print "Add time " + begin + " - " + end + " for " + service
+				newtime = Time(start=begin,end=end,allow=0);
+				serv.times.append(newtime);
+				print "Added time " + begin + " - " + end + " for " + service
 			elif data['addremove'] == "remove":
-				print "Remove time " + begin + " - " + end + " for " + service
+				Time.query.filter_by(start=begin,end=end,serviceid=serv.id).delete()
+				print "Removed time " + begin + " - " + end + " for " + service
 		elif data['type'] == "loc":
 			latitude = data['latitude']
 			longitude = data['longitude']
+			radius = data['radius']
 			if data['addremove'] == "add":
-				print "Add loc " + str(latitude) + " - " + str(longitude) + " for " + service
+				newloc = Location(latitude=latitude,longitude=longitude,radius=radius,allow=0);
+				serv.locations.append(newloc);
+				print "Added loc " + str(latitude) + ", " + str(longitude) + " Radius: " + str(radius) + " for " + service
 			elif data['addremove'] == "remove":
-				print "Remove loc " + str(latitude) + " - " + str(longitude) + " for " + service	
-		#~ db.session.commit()
+				Location.query.filter_by(latitude=latitude,longitude=longitude,radius=radius,serviceid=serv.id).delete()
+				print "Removed loc " + str(latitude) + ", " + str(longitude) + " Radius: " + str(radius) + " for " + service	
+		db.session.commit()
 	return render_template('subsettings.html', service=service, onetimepass=onetime, locationList=locations, timeList=times)
 			
 
