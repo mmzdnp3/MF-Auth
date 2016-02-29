@@ -1,22 +1,14 @@
-from flask import Flask, g, render_template, request, abort, redirect, url_for, flash, session
+from flask import Flask, g, render_template, request, abort, redirect, url_for, flash, session, jsonify
 from flask.ext.login import LoginManager, UserMixin, login_user, logout_user, login_required
 from flask.ext.sqlalchemy import SQLAlchemy
-import datetime, pyotp, base64, time, os, socket
+import datetime, pyotp, base64, time, os
+import json
 import cPickle as pickle
 from thread import *
-
-def create_dictionary(username,email,time,lat,lon,auth_code):
-    
-    data = {'username': username,
-            'email': email,
-            'time': time,
-            'lat': lat,
-            'long': lon,
-            'auth_code': auth_code}
-    return data;
+import urllib2
 
 
-DEBUG = False
+DEBUG = True
 SECRET_KEY = 'yekterces'
 SQLALCHEMY_DATABASE_URI = 'mysql://root:shadow@localhost:3306/mock'
  
@@ -30,23 +22,6 @@ login_manager.login_view = 'index'
  
 db = SQLAlchemy(app)
 
-try:
-    s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-except socket.error, msg:
-    print 'Failed to create socket. Error code: ' + str(msg[0]) + ' , Error message : ' + msg[1]
-    sys.exit();
-
-host = socket.gethostname() 
-
-try:
-    remote_ip = socket.gethostbyname(host)
-except socket.gaierror:
-    print 'Hostname could not be resolved. Exiting'
-    sys.exit()
-
-s.connect((remote_ip, 6321))
-print 'Socket connected to ' + host + ' on IP ' + remote_ip
- 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(45))
@@ -101,16 +76,18 @@ def login():
         password = request.form['txtPassword']
         latitude = request.form['latitude']
         longitude = request.form['longitude']
-        print latitude
-        print longitude
         user = User.query.filter_by(username=username).filter_by(password=password)
-        if user.count() == 1:
+        if user.count() == 1:  
             user = user.one()
-            dictionary = create_dictionary(username,user.email,'fdsfssd',latitude,longitude, None)
-            d = pickle.dumps(dictionary)
-            s.sendall(d)
-            session['uid'] = user.get_id()
-            return redirect(url_for('key'))
+            session['uid'] = user.get_id()  
+            response = urllib2.urlopen('http://localhost:5000/api/get_otp_en/mock/' + username)
+            data = json.loads(response.read())
+            if data['otp_en'] == 1:
+                response = urllib2.urlopen('http://localhost:5000/api/send_otp/' + username)
+                return redirect(url_for('key'))
+            login_user(user)
+            return redirect(url_for('index'))
+               
         else:
             return 'fail';
     else:
@@ -125,15 +102,16 @@ def key():
         return render_template('key.html')
     elif request.method == 'POST':
         key = request.form['txtKey']
-        dictionary = create_dictionary(None,None,None,None,None,key)
-        d = pickle.dumps(dictionary)
-        s.sendall(d)
-        authenticated = s.recv(4096)
-        if authenticated == 'Yes':
+        d = json.dumps({'otp' : key})
+        url = 'http://localhost:5000/api/verify_otp'
+        req = urllib2.Request(url, d, {'Content-Type' : 'application/json', 'Content-Length' : len(d)})
+        response = urllib2.urlopen(req)
+        data = json.loads(response.read())
+        if data['success'] == 1:
             login_user(user)
-        else:
-            return 'fail'
-        return redirect(url_for('index'))
+            return redirect(url_for('index'))
+        return redirect(url_for('login'))          
+        
     else:
         return abort(405)
 

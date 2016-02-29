@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request, abort, redirect, url_for, flash
+from flask import Flask, render_template, request, abort, redirect, url_for, flash, jsonify, make_response
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from flask.ext.sqlalchemy import SQLAlchemy
-from app import app, db,login_manager
+from app import app, db,login_manager, code_list
 from .email import send_one_time
 from .models import User, Service, Location, Time
 
@@ -15,6 +15,58 @@ def user_loader(user_id):
 @app.before_first_request
 def init_request():
     db.create_all()
+
+@app.route('/api/get_otp_en/<service>/<username>', methods=['GET'])
+def get_otp_en(service, username):
+    user = User.query.filter_by(username=username)
+    if user.count() == 1:
+        serv = user.first().services.filter_by(name=service)
+        if serv.count() == 1:
+            otp_en = serv.first().onetimepass
+            return jsonify({'otp_en' : otp_en})
+    abort(404)
+
+@app.route('/api/send_otp/<username>', methods=['GET'])
+def send_otp(username):
+    user = User.query.filter_by(username=username)
+    if user.count() == 1:
+        email = user.first().email
+        send_one_time([email])
+        return jsonify({'success' : 1})
+    abort(404)
+
+@app.route('/api/verify_otp', methods=['POST'])
+def verify_otp():
+    if not request.json or not 'otp' in request.json:
+        abort(400)
+    otp = request.json['otp']
+    if [pair for pair in code_list if pair[0] == otp]:
+        return jsonify({'success' : 1})
+    else:
+       return jsonify({'success' : 0}) 
+
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({'error': 'Not found'}), 404)
+
+    # locations = serv.locations.all()
+    # times = serv.times.all()
+    # location_list = []
+    # time_list = []
+    # for location in locations:
+    #     location_list.append( (location.latitude, location.longitude, location.radius, location.allow) )
+    # for time in times:
+    #     time_list.append( (time.start, time.end) )
+
+
+@app.route('/api/verify/', methods=['POST'])
+def verify(service, username):
+    if not request.json:
+        abort(400)
+    service = request.json['service']
+    username = request.json['username']
+    code = request.json['code']
+    location = request.json['location']
 
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required
