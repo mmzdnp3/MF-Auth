@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 <html >
   <head>
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
     <meta charset="UTF-8">
     <title>Login</title>
     <style>
@@ -203,6 +204,18 @@ input[type="submit"] {
     </fieldset>
 
   </div> <!-- end login-form -->
+{% with msgs = get_flashed_messages() %}
+        {% if msgs %}
+          {%- for msg in msgs %}
+            <br>
+            <div class="alert alert-info" style="width:30%; margin: 0 auto; position: relative; border-radius: 0px; text-align: center;">
+              {{ msg }}
+            </div>
+          {% endfor -%}
+        {% endif %}
+      {% endwith %}
+      
+      {% block body %} {% endblock %}
 
 </div>
     

@@ -3,6 +3,7 @@
             <li><a href="/register">Register</b></a></li>
 <html>
 <head>
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
   <title>Security Login</title>
   <style>
 $color: #999;
@@ -180,7 +181,7 @@ input[type="submit"] { cursor: pointer; }
         </div>
     </nav>
     <div class="container">
-        <div id="login-form" style="margin: 0 auto">
+        <div id="login-form" style="margin: 0 auto;">
         <h3> Enter Security Code to Continue </h3>
         <fieldset>
         <form action="/key" method="POST">
@@ -194,6 +195,19 @@ input[type="submit"] { cursor: pointer; }
         </fieldset>
     </div> <!-- end login-form -->
 </div>
+ <!-- Display flashed messages -->
+      {% with msgs = get_flashed_messages() %}
+        {% if msgs %}
+          {%- for msg in msgs %}
+            <br>
+            <div class="alert alert-info" style="width:30%; margin: 0 auto; position: relative; border-radius: 0px; text-align: center;">
+              {{ msg }}
+            </div>
+          {% endfor -%}
+        {% endif %}
+      {% endwith %}
+      
+      {% block body %} {% endblock %}
 </body>
 </html>
 {% endblock %}
