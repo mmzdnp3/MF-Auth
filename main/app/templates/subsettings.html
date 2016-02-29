@@ -87,12 +87,11 @@
 		var cell1 = row.insertCell(0);
 		var cell2 = row.insertCell(1);
 		var cell3 = row.insertCell(2);
-		var time = begin + '-' + end
+		var time = begin + ' - ' + end
 		cell1.innerHTML = time;
-		cell2.innerHTML = '<input type="checkbox" id="onetime" name="onetime" value="enable">';
+		cell2.innerHTML = '<input type="checkbox" id="'+begin+'-'+end+'" name="'+begin+'" value="'+end+'">';
 		cell3.innerHTML = '<a class="btn"  onclick="javascript:deleteTimeRow(this,\''+begin+'\',\''+end+'\'); return false;"><i class="fa fa-minus-square" style="color:#1E90FF"></i></a>';
-    }
-
+	}
      </script>
 </head>
 <style>
@@ -434,7 +433,38 @@ th {
 	  <td>{{loc.latitude}}</td>
 	  <td>{{loc.longitude}}</td>
 	  <td>{{loc.radius}}</td>
-	  <td><input type="checkbox" id="onetime" name="onetime" value="enable"></td>
+	  
+		{%if loc.allow==0 %}
+			<td><input type="checkbox" id="loc-{{loc.id}}" name="time" value="enable"></td>
+		{% else %}
+			<td><input type="checkbox" id="loc-{{loc.id}}" name="time" value="enable" checked></td>
+		{% endif %}
+		<script>
+			$("input[type=checkbox][id=loc-{{loc.id}}]").change(function() 
+			{
+				var enable = 0
+				if(this.checked)
+				{
+					enable = 1
+				}
+				else
+				{
+					enable = 0
+				}
+				$.ajax
+				({
+					url:"/settings/{{service}}",
+					type:'POST',
+					contentType: 'application/json',
+					data: JSON.stringify({type: "loc", latitude:{{loc.latitude}}, longitude:{{loc.longitude}}, radius:{{loc.radius}}, addremove:'check', allow:enable}),
+					dataType: 'json',
+					success: function(e)
+					{
+					console.log(e);
+					}
+				});
+			});			
+		  </script>	    
 	  <td><a class="btn" onclick="javascript:deleteLocRow(this, {{loc.latitude}}, {{loc.longitude}}, {{loc.radius}}); return false;">
 		 <i class="fa fa-minus-square" style="color:#1E90FF"></i></a></td>
   </tr>
@@ -464,8 +494,39 @@ th {
 		{% for time in timeList %}
 		<tr>
 		  <td>{{time.start}} - {{time.end}}</td>
-		  <td><input type="checkbox" id="time" name="time" value="enable"></td>
-		  <td><a class="btn" onclick="javascript:deleteTimeRow(this, {{time.start}}, {{time.end}}); return false;">
+			{%if time.allow==0 %}
+				<td><input type="checkbox" id="time-{{time.id}}" name="time" value="enable"></td>
+			{% else %}
+				<td><input type="checkbox" id="time-{{time.id}}" name="time" value="enable" checked></td>
+			{% endif %}
+		  <script>
+			$("input[type=checkbox][id=time-{{time.id}}]").change(function() 
+			{
+				var enable = 0
+				if(this.checked)
+				{
+					enable = 1
+				}
+				else
+				{
+					enable = 0
+				}
+				$.ajax
+				({
+					url:"/settings/{{service}}",
+					type:'POST',
+					contentType: 'application/json',
+					data: JSON.stringify({type: "time", begintime:'{{time.start}}', endtime:'{{time.end}}', addremove:'check', allow:enable}),
+					dataType: 'json',
+					success: function(e)
+					{
+					console.log(e);
+					}
+				});
+			});
+				
+		  </script>
+		  <td><a class="btn" onclick="javascript:deleteTimeRow(this, '{{time.start}}', '{{time.end}}'); return false;">
 			 <i class="fa fa-minus-square" style="color:#1E90FF"></i></a></td>
 		</tr>
 		{% endfor %}
