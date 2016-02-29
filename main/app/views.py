@@ -163,7 +163,8 @@ def subsettings(service=None):
 					time.allow = 0;
 					print "Disallow login for " + begin + " - " + end + " for " + service
 			if data['addremove'] == "add":
-				newtime = Time(start=begin,end=end,allow=0);
+				allow = data['allow']
+				newtime = Time(start=begin,end=end,allow=allow);
 				serv.times.append(newtime);
 				print "Added time " + begin + " - " + end + " for " + service
 			elif data['addremove'] == "remove":
@@ -183,7 +184,8 @@ def subsettings(service=None):
 					loc.allow = 0;
 					print "Disallow login for "+ str(latitude) + ", " + str(longitude) + " Radius: " + str(radius) + " for " + service
 			if data['addremove'] == "add":
-				newloc = Location(latitude=latitude,longitude=longitude,radius=radius,allow=0);
+				allow = data['allow']
+				newloc = Location(latitude=latitude,longitude=longitude,radius=radius,allow=allow);
 				serv.locations.append(newloc);
 				print "Added loc " + str(latitude) + ", " + str(longitude) + " Radius: " + str(radius) + " for " + service
 			elif data['addremove'] == "remove":
