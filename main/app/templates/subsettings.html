@@ -423,7 +423,7 @@ th {
     <th>Latitude </th>
     <th>Longitude </th>
     <th>Radius </th>
-    <th>Enable </th>
+    <th>Allow </th>
     <th>Remove</th>
   </tr>
   
@@ -455,7 +455,7 @@ th {
         <table id="Times">
         <tr>
           <th>Time Range</th>
-          <th>Enable</th>
+          <th>Allow</th>
           <th>Remove</th>
         </tr>
         
@@ -464,7 +464,7 @@ th {
 		{% for time in timeList %}
 		<tr>
 		  <td>{{time.start}} - {{time.end}}</td>
-		  <td><input type="checkbox" id="onetime" name="onetime" value="enable"></td>
+		  <td><input type="checkbox" id="time" name="time" value="enable"></td>
 		  <td><a class="btn" onclick="javascript:deleteTimeRow(this, {{time.start}}, {{time.end}}); return false;">
 			 <i class="fa fa-minus-square" style="color:#1E90FF"></i></a></td>
 		</tr>
