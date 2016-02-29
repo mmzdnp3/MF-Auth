@@ -76,15 +76,12 @@ def login():
             d = json.dumps({'username' : username, 'service' : 'mock', 'latitude' : latitude, \
                             'longitude' : longitude, 'time' : time})
 
-            print d
-
             url = 'http://localhost:5000/api/verify_login'
             req = urllib2.Request(url, d, {'Content-Type' : 'application/json', 'Content-Length' : len(d)})
             response = urllib2.urlopen(req)
             data = json.loads(response.read())
-            print data['success']
-
-
+            if data['success'] != 1:
+                return redirect(url_for('login'))    
 
             response = urllib2.urlopen('http://localhost:5000/api/get_otp_en/mock/' + username)
             data = json.loads(response.read())
