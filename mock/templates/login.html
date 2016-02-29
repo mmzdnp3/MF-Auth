@@ -4,6 +4,7 @@
 <html >
   <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
     <meta charset="UTF-8">
     <title>Login</title>
     <style>
@@ -180,12 +181,12 @@ input[type="submit"] {
     </nav>
     <div class="container">
 
-  <div id="login-form">
+  <div id="login-form" style="margin: 0 auto;">
 
     <h3>Mock Site</h3>
 
     <fieldset>
-      <form action="/login" method="POST">
+      <form action="/login" method="POST" >
         <script>
           $(function(){
             if (navigator.geolocation) {
@@ -216,6 +217,20 @@ input[type="submit"] {
     </fieldset>
 
   </div> <!-- end login-form -->
+   <!-- Display flashed messages -->
+      {% with msgs = get_flashed_messages() %}
+        {% if msgs %}
+          {%- for msg in msgs %}
+            <br>
+            <div class="alert alert-info" style="width:30%; margin: 0 auto; position: relative; border-radius: 0px; text-align: center;">
+              {{ msg }}
+            </div>
+          {% endfor -%}
+        {% endif %}
+      {% endwith %}
+      
+      {% block body %} {% endblock %}
+
 
 </div>
     

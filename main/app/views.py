@@ -211,10 +211,10 @@ def login():
             login_user(user.one())
             return redirect(url_for('settings'))
         else:
-            flash('Invalid login')
-            return 'fail';
+            flash('Invalid credentials')      
     else:
         return abort(405)
+    return render_template('login.html') 
 
 @app.route('/')
 def index():
