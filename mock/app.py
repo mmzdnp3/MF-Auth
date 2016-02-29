@@ -79,6 +79,7 @@ def login():
             login_user(user)
             return redirect(url_for('index'))        
         else:
+            flash('Invalid Credentials')
             return redirect(url_for('login'))    
     else:
         return abort(405)
@@ -100,7 +101,9 @@ def key():
         if data['success'] == 1:
             login_user(user)
             return redirect(url_for('index'))
-        return redirect(url_for('login'))          
+        else:
+            flash('Invalid Key')
+            return redirect(url_for('login'))          
         
     else:
         return abort(405)

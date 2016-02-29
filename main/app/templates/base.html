@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <title>MFAuth</title>
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
 <style>
 html, body {
     width: 100%;
@@ -14,8 +15,6 @@ html, body {
     background-color: #f3f3f3;
     overflow: auto;
 }
-
-
 
 
 ul {
@@ -71,6 +70,22 @@ li a.active {
             {% endif %}
           </ul>
         </div>
+
+     
+      <!-- Display flashed messages -->
+      {% with msgs = get_flashed_messages() %}
+        {% if msgs %}
+          {%- for msg in msgs %}
+            <br>
+            <div class="alert alert-info" style="width:30%; margin: 0 auto; position: relative; border-radius: 0px; text-align: center;">
+              {{ msg }}
+            </div>
+          {% endfor -%}
+        {% endif %}
+      {% endwith %}
+      
+      {% block body %} {% endblock %}
+
     </nav>
     {% block content %}{% endblock %}
   </body>
