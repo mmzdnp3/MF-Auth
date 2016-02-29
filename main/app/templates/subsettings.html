@@ -374,7 +374,11 @@ th {
 <!--    OTP -->
     <h3>One-time Password</h3>
     <div>
-		<input type="checkbox" id="onetime" name="onetime" value="enable"> Enable One-time Password Authentication</input>
+		{%if onetimepass==0 %}
+			<input type="checkbox" id="onetime" name="onetime" value="enable"> Enable One-time Password Authentication</input>
+		{% else %}
+			<input type="checkbox" id="onetime" name="onetime" value="enable" checked> Enable One-time Password Authentication</input>
+		{% endif %}
 		<script>
 		$("input[type=checkbox][name=onetime]").change(function() 
 		{
@@ -405,7 +409,6 @@ th {
     
     
     
-
 
 <!--     LOCATION RESTRICTIONS -->
     <h3>Location Restrictions</h3>
