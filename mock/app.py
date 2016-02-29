@@ -1,25 +1,19 @@
-from flask import Flask, g, render_template, request, abort, redirect, url_for, flash, session, jsonify
-from flask.ext.login import LoginManager, UserMixin, login_user, logout_user, login_required
+from flask import Flask, render_template, request, abort, redirect, url_for, flash, session
+from flask.ext.login import LoginManager, login_user, logout_user, login_required
 from flask.ext.sqlalchemy import SQLAlchemy
-import datetime, pyotp, base64, time, os
-import json
-import cPickle as pickle
-from thread import *
-import urllib2
+import os, json, urllib2
 
-
-DEBUG = True
 SECRET_KEY = 'yekterces'
 SQLALCHEMY_DATABASE_URI = 'mysql://root:shadow@localhost:3306/mock'
- 
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+
 app = Flask(__name__)
 app.config.from_object(__name__)
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
  
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'index'
- 
+
 db = SQLAlchemy(app)
 
 class User(db.Model):
@@ -41,10 +35,7 @@ class User(db.Model):
         return False
 
     def get_id(self):
-        try:
-            return unicode(self.id)  # python 2
-        except NameError:
-            return str(self.id)  # python 3
+        return unicode(self.id)
 
 @login_manager.user_loader
 def user_loader(user_id):
@@ -86,10 +77,9 @@ def login():
                 response = urllib2.urlopen('http://localhost:5000/api/send_otp/' + username)
                 return redirect(url_for('key'))
             login_user(user)
-            return redirect(url_for('index'))
-               
+            return redirect(url_for('index'))        
         else:
-            return 'fail';
+            return redirect(url_for('login'))    
     else:
         return abort(405)
 
@@ -119,8 +109,9 @@ def key():
 def index():
     return render_template('index.html')
 
- 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5001))
     host = os.getenv('IP', '127.0.0.1')
-    app.run(port=port, host=host)
+    app.run(port=port, host=host, debug=True)
+
+
