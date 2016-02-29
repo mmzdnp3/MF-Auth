@@ -1,9 +1,27 @@
 from flask import Flask, render_template, request, abort, redirect, url_for, flash, jsonify, make_response
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from flask.ext.sqlalchemy import SQLAlchemy
+import math
 from app import app, db,login_manager, code_list
 from .email import send_one_time
 from .models import User, Service, Location, Time
+
+def distance_between_coords(lat1, long1, lat2, long2):
+    degrees_to_radians = math.pi/180.0
+    earth_radius = 6370
+         
+    phi1 = (90.0 - lat1)*degrees_to_radians
+    phi2 = (90.0 - lat2)*degrees_to_radians
+         
+    theta1 = long1*degrees_to_radians
+    theta2 = long2*degrees_to_radians
+     
+    cos = (math.sin(phi1)*math.sin(phi2)*math.cos(theta1 - theta2) + \
+           math.cos(phi1)*math.cos(phi2))
+
+    arc = math.acos(cos)
+
+    return arc * earth_radius
 
 @login_manager.user_loader
 def user_loader(user_id):
@@ -48,48 +66,46 @@ def verify_otp():
 @app.route('/api/verify_login', methods=['POST'])
 def verify_login():
     if not 'username' in request.json:
-        print '<1>'
         abort(400)
     if not 'service' in request.json:
-        print '<2>'
         abort(400)
     if not 'latitude' in request.json:
-        print '<3>'
         abort(400)
     if not 'longitude' in request.json:
-        print '<4>'
         abort(400)
     if not 'time' in request.json:
-        print '<5>'
         abort(400) 
-
-    print '<6>'
 
     username = request.json['username']
     service = request.json['service']
-    latitude = request.json['latitude']
-    longitude = request.json['longitude']
+    latitude = float(request.json['latitude'])
+    longitude = float(request.json['longitude'])
     time = request.json['time']
 
-    print '<7>'
     user = User.query.filter_by(username=username)
     if user.count() != 1:
         abort(404)
 
-    # serv = user.first().services.filter_by(name=service) 
-    # if serv.count() != 1:
-    #     abort(404)
+    serv = user.first().services.filter_by(name=service) 
+    if serv.count() != 1:
+        abort(404)
 
-    # locations = serv.locations.all()
-    # times = serv.times.all()
+    locations_db = serv.first().locations.all()
+    times_db = serv.first().times.all()
 
-    # for loc in locations:
-    #     print loc
-
-    #if verified:
-    return jsonify({'success' : 1})
-    #else:
-    #   return jsonify({'success' : 0}) 
+    verified_loc = False
+    for loc in locations_db:
+        lat_db = float(loc.latitude)
+        long_db = float(loc.longitude)
+        radius_db = float(loc.radius)/1000
+        distance = distance_between_coords(latitude, longitude, lat_db, long_db)
+        if distance <= radius_db:
+            verified_loc = True
+    
+    if verified_loc:
+        return jsonify({'success' : 1})
+    else:
+       return jsonify({'success' : 0}) 
 
 @app.errorhandler(404)
 def not_found(error):
@@ -147,7 +163,8 @@ def subsettings(service=None):
 					time.allow = 0;
 					print "Disallow login for " + begin + " - " + end + " for " + service
 			if data['addremove'] == "add":
-				newtime = Time(start=begin,end=end,allow=0);
+				allow = data['allow']
+				newtime = Time(start=begin,end=end,allow=allow);
 				serv.times.append(newtime);
 				print "Added time " + begin + " - " + end + " for " + service
 			elif data['addremove'] == "remove":
@@ -167,7 +184,8 @@ def subsettings(service=None):
 					loc.allow = 0;
 					print "Disallow login for "+ str(latitude) + ", " + str(longitude) + " Radius: " + str(radius) + " for " + service
 			if data['addremove'] == "add":
-				newloc = Location(latitude=latitude,longitude=longitude,radius=radius,allow=0);
+				allow = data['allow']
+				newloc = Location(latitude=latitude,longitude=longitude,radius=radius,allow=allow);
 				serv.locations.append(newloc);
 				print "Added loc " + str(latitude) + ", " + str(longitude) + " Radius: " + str(radius) + " for " + service
 			elif data['addremove'] == "remove":

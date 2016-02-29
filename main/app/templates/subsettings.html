@@ -60,7 +60,7 @@
 		});
     }
 
-    function addRowLoc(location, latitude, longitude, radius)
+    function addRowLoc(location, latitude, longitude, allow, radius)
     {
 		var x = document.getElementById("Locations").rows.length;
 		var table = document.getElementById("Locations");
@@ -77,11 +77,19 @@
 		cell2.innerHTML = latitude;
 		cell3.innerHTML = longitude;
 		cell4.innerHTML = radius;
-		cell5.innerHTML = '<input type="checkbox" id="onetime" name="onetime" value="enable" >';
+		cell5.innerHTML = '';
+		if(allow==1)
+		{
+			cell5.innerHTML += '<input type="checkbox" id="onetime" name="onetime" value="enable" checked>';
+		}
+		else
+		{
+			cell5.innerHTML += '<input type="checkbox" id="onetime" name="onetime" value="enable">';
+		}
 		cell6.innerHTML = '<a class="btn"  onclick="javascript:deleteLocRow(this, '+latitude+', '+longitude+','+radius+'); return false;"><i class="fa fa-minus-square" style="color:#1E90FF"></i></a>';
     }
 
-    function addRowTime(begin, end)
+    function addRowTime(begin, end, allow)
     {
 		var x = document.getElementById("Times").rows.length;
 		var table = document.getElementById("Times");
@@ -91,7 +99,15 @@
 		var cell3 = row.insertCell(2);
 		var time = begin + ' - ' + end
 		cell1.innerHTML = time;
-		cell2.innerHTML = '<input type="checkbox" id="'+begin+'-'+end+'" name="'+begin+'" value="'+end+'">';
+		cell2.innerHTML = '';
+		if(allow==1)
+		{
+			cell2.innerHTML += '<input type="checkbox" id="'+begin+'-'+end+'" name="'+begin+'" value="'+end+'" checked>';
+		}
+		else
+		{
+			cell2.innerHTML += '<input type="checkbox" id="'+begin+'-'+end+'" name="'+begin+'" value="'+end+'">';
+		}
 		cell3.innerHTML = '<a class="btn"  onclick="javascript:deleteTimeRow(this,\''+begin+'\',\''+end+'\'); return false;"><i class="fa fa-minus-square" style="color:#1E90FF"></i></a>';
 	}
      </script>
@@ -564,24 +580,30 @@ th {
       </div>
       <br>
        <a class="button"  onclick="addLocation()">Add</a>
-       <div style="float:right"><input type="checkbox" id="onetime" name="onetime" value="enable"> Allow</input></div>
+       <div style="float:right"><input type="checkbox" id="locallow" name="locallow" value="enable"> Allow</input></div>
       </div>
-            <script>
+      <script>
         function addLocation()
         {
-          addRowLoc(city + ", " + state, lat, longitude, rad)
-          return $.ajax
-      ({
-        url:"/settings/{{service}}",
-        type:'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({type: "loc", latitude: +lat.toFixed(3), longitude: +longitude.toFixed(3), radius: rad, addremove:"add"}),
-        dataType: 'json',
-        success: function(e)
-        {
-        console.log(e);
-        }
-      });
+			var allow = 0;
+			if($("#locallow").is(':checked'))
+			{
+				allow = 1;
+			}
+			addRowLoc(city + ", " + state, lat, longitude, allow,rad)
+
+			return $.ajax
+			({
+				url:"/settings/{{service}}",
+				type:'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({type: "loc", latitude: +lat.toFixed(3), longitude: +longitude.toFixed(3), radius: rad, allow: allow,addremove:"add"}),
+				dataType: 'json',
+				success: function(e)
+				{
+					console.log(e);
+				}
+			});
         }  
       $('#us2').locationpicker({
         location: {latitude: 33.953350, longitude: -117.396156},
@@ -626,7 +648,7 @@ th {
         
         <br>
         <a class="button"  onclick="addTime()">Add</a>
-        <div style="float:right"><input type="checkbox" id="onetime" name="onetime" value="enable"> Allow</input></div>
+        <div style="float:right"><input type="checkbox" id="timeallow" name="timeallow" value="enable"> Allow</input></div>
       </div>
       <script>
        var hours1 = "10";
@@ -635,15 +657,20 @@ th {
        var minutes2 = "00 PM ";
        function addTime()
        {
+		  var allow = 0;
+		  if($("#timeallow").is(':checked'))
+		  {
+			  allow = 1;
+		  }
 		  var begin = hours1 + ':' + minutes1
 		  var end = hours2 + ':' + minutes2
-          addRowTime(begin, end);
+          addRowTime(begin, end, allow);
           return $.ajax
 		  ({
 			  url:"/settings/{{service}}",
 			  type:'POST',
 			  contentType: 'application/json',
-			  data: JSON.stringify({type: "time", begintime: begin, endtime: end, addremove:"add"}),
+			  data: JSON.stringify({type: "time", begintime: begin, endtime: end, allow:allow, addremove:"add"}),
 			  dataType: 'json',
 			  success: function(e)
 			  {
