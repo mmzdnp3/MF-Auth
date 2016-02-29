@@ -69,8 +69,8 @@
 		var cell4 = row.insertCell(3);
 		var cell5 = row.insertCell(4);
 		var cell6 = row.insertCell(5);
-		latitude = +latitude.toFixed(4);
-		longitude = +longitude.toFixed(4);
+		latitude = +latitude.toFixed(3);
+		longitude = +longitude.toFixed(3);
 		cell1.innerHTML = location;
 		cell2.innerHTML = latitude;
 		cell3.innerHTML = longitude;
@@ -87,7 +87,7 @@
 		var cell1 = row.insertCell(0);
 		var cell2 = row.insertCell(1);
 		var cell3 = row.insertCell(2);
-		var time = begin + ':' + end
+		var time = begin + '-' + end
 		cell1.innerHTML = time;
 		cell2.innerHTML = '<input type="checkbox" id="onetime" name="onetime" value="enable">';
 		cell3.innerHTML = '<a class="btn"  onclick="javascript:deleteTimeRow(this,\''+begin+'\',\''+end+'\'); return false;"><i class="fa fa-minus-square" style="color:#1E90FF"></i></a>';
@@ -463,9 +463,9 @@ th {
         <!-- GENERATING TABLE BASED ON TIME LIST FROM DB -->
 		{% for time in timeList %}
 		<tr>
-		  <td>{{time.begin}} - {{time.end}}</td>
+		  <td>{{time.start}} - {{time.end}}</td>
 		  <td><input type="checkbox" id="onetime" name="onetime" value="enable"></td>
-		  <td><a class="btn" onclick="javascript:deleteTimeRow(this, {{time.begin}}, {{time.end}}); return false;">
+		  <td><a class="btn" onclick="javascript:deleteTimeRow(this, {{time.start}}, {{time.end}}); return false;">
 			 <i class="fa fa-minus-square" style="color:#1E90FF"></i></a></td>
 		</tr>
 		{% endfor %}
@@ -507,7 +507,7 @@ th {
 			  url:"/settings/{{service}}",
 			  type:'POST',
 			  contentType: 'application/json',
-			  data: JSON.stringify({type: "loc", latitude: lat, longitude: longitude, radius: rad, addremove:"add"}),
+			  data: JSON.stringify({type: "loc", latitude: +lat.toFixed(3), longitude: +longitude.toFixed(3), radius: rad, addremove:"add"}),
 			  dataType: 'json',
 			  success: function(e)
 			  {
