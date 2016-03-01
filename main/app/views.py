@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, abort, redirect, url_for, flash, jsonify, make_response
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from flask.ext.sqlalchemy import SQLAlchemy
-import math
+import math,re
 from app import app, db,login_manager, code_list
 from .email import send_one_time
 from .models import User, Service, Location, Time
@@ -22,6 +22,24 @@ def distance_between_coords(lat1, long1, lat2, long2):
     arc = math.acos(cos)
 
     return arc * earth_radius
+
+def convert_time(start, end):
+    startTime = re.search("(\d{1,2}):(\d{2})\s+(AM|PM)",start)
+    startTimeV = startTime.group(1) + startTime.group(2);
+    startTimeV = int(startTimeV)
+    if(startTime.group(3) == "PM"):
+        if(startTime.group(1)!="12"):  
+            startTimeV += 1200
+    print startTimeV
+
+    endTime = re.search("(\d{1,2}):(\d{2})\s+(AM|PM)",end)    
+    endTimeV = endTime.group(1) + endTime.group(2);
+    endTimeV = int(endTimeV)
+    if(endTime.group(3) == "PM"):
+        if(endTime.group(1)!="12"):  
+            endTimeV+=1200
+    print endTimeV
+    return startTimeV,endTimeV    
 
 @login_manager.user_loader
 def user_loader(user_id):
@@ -78,9 +96,12 @@ def verify_login():
 
     username = request.json['username']
     service = request.json['service']
-    latitude = float(request.json['latitude'])
-    longitude = float(request.json['longitude'])
-    time = request.json['time']
+    try:
+        latitude = float(request.json['latitude'])
+        longitude = float(request.json['longitude'])
+    except ValueError: 
+        abort(404)
+    time = int(request.json['time'])
 
     user = User.query.filter_by(username=username)
     if user.count() != 1:
@@ -93,16 +114,27 @@ def verify_login():
     locations_db = serv.first().locations.all()
     times_db = serv.first().times.all()
 
-    verified_loc = False
+    verified_loc = True
     for loc in locations_db:
         lat_db = float(loc.latitude)
         long_db = float(loc.longitude)
         radius_db = float(loc.radius)/1000
+        allow = int(loc.allow)
         distance = distance_between_coords(latitude, longitude, lat_db, long_db)
-        if distance <= radius_db:
-            verified_loc = True
+        if allow == 0:
+            if distance <= radius_db:
+                print "BAD LOC"
+                verified_loc = False
+    verified_time = True
+    for t in times_db:
+        timepair = convert_time(t.start, t.end)
+        if t.allow == 0:
+            if timepair[0] < time and timepair[1] > time:
+                print "BAD TIME"
+                verified_time = False
+
     
-    if verified_loc:
+    if verified_loc and verified_time:
         return jsonify({'success' : 1})
     else:
        return jsonify({'success' : 0}) 
@@ -137,10 +169,9 @@ def subsettings(service=None):
 	onetime = serv.onetimepass
 	locations = serv.locations.all()
 	times = serv.times.all()
-	
 	if request.method == 'GET':
 		return render_template('subsettings.html', service=service, onetimepass=onetime, locationList=locations, timeList=times)
-		
+	
 	if request.method == 'POST':
 		data = request.get_json(silent=True)
 		if data['type'] == "otp":
@@ -179,21 +210,21 @@ def subsettings(service=None):
 				loc = Location.query.filter_by(latitude=latitude,longitude=longitude,serviceid=serv.id).first()
 				if data['allow'] == 1:
 					print "Allow login for "+ str(latitude) + ", " + str(longitude) + " Radius: " + str(radius) + " for " + service
-					loc.allow = 1;
+					loc.allow = 1
 				elif data['allow'] == 0:
-					loc.allow = 0;
+					loc.allow = 0
 					print "Disallow login for "+ str(latitude) + ", " + str(longitude) + " Radius: " + str(radius) + " for " + service
-			if data['addremove'] == "add":
-				allow = data['allow']
-				newloc = Location(latitude=latitude,longitude=longitude,radius=radius,allow=allow);
-				serv.locations.append(newloc);
-				print "Added loc " + str(latitude) + ", " + str(longitude) + " Radius: " + str(radius) + " for " + service
-			elif data['addremove'] == "remove":
-				Location.query.filter_by(latitude=latitude,longitude=longitude,radius=radius,serviceid=serv.id).delete()
-				print "Removed loc " + str(latitude) + ", " + str(longitude) + " Radius: " + str(radius) + " for " + service
-				
-		db.session.commit()
-	return render_template('subsettings.html', service=service, onetimepass=onetime, locationList=locations, timeList=times)
+                if data['addremove'] == "add":
+                    allow = data['allow']
+                    place = data['place']
+                    newloc = Location(latitude=latitude,longitude=longitude,radius=radius,allow=allow,place=place)
+                    serv.locations.append(newloc)
+                    print "Added loc " + str(latitude) + ", " + str(longitude) + " Radius: " + str(radius) + " for " + service
+                elif data['addremove'] == "remove":
+                    Location.query.filter_by(latitude=latitude,longitude=longitude,radius=radius,serviceid=serv.id).delete()
+                    print "Removed loc " + str(latitude) + ", " + str(longitude) + " Radius: " + str(radius) + " for " + service			
+        db.session.commit()
+        return render_template('subsettings.html', service=service, onetimepass=onetime, locationList=locations, timeList=times)
 			
 
 @app.route('/logout')

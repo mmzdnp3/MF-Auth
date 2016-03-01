@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, abort, redirect, url_for, flash, session
 from flask.ext.login import LoginManager, login_user, logout_user, login_required
 from flask.ext.sqlalchemy import SQLAlchemy
+from time import strftime
 import os, json, urllib2
 
 SECRET_KEY = 'yekterces'
@@ -72,7 +73,7 @@ def login():
             user = user.one()
             session['uid'] = user.get_id()
 
-            time = 1
+            time = strftime("%H%M")
             d = json.dumps({'username' : username, 'service' : 'mock', 'latitude' : latitude, \
                             'longitude' : longitude, 'time' : time})
 
@@ -81,6 +82,7 @@ def login():
             response = urllib2.urlopen(req)
             data = json.loads(response.read())
             if data['success'] != 1:
+                flash('Access Denied')
                 return redirect(url_for('login'))    
 
             response = urllib2.urlopen('http://localhost:5000/api/get_otp_en/mock/' + username)

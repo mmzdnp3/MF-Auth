@@ -26,15 +26,16 @@ DROP TABLE IF EXISTS `location`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `location` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `latitude` float DEFAULT NULL,
-  `longitude` float DEFAULT NULL,
-  `radius` float DEFAULT NULL,
+  `latitude` decimal(10,3) DEFAULT NULL,
+  `longitude` decimal(10,3) DEFAULT NULL,
+  `radius` decimal(10,3) DEFAULT NULL,
   `allow` int(11) DEFAULT NULL,
   `serviceid` int(11) DEFAULT NULL,
+  `place` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `serviceid` (`serviceid`),
   CONSTRAINT `location_ibfk_1` FOREIGN KEY (`serviceid`) REFERENCES `service` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -43,7 +44,7 @@ CREATE TABLE `location` (
 
 LOCK TABLES `location` WRITE;
 /*!40000 ALTER TABLE `location` DISABLE KEYS */;
-INSERT INTO `location` VALUES (1,33.9843,-117.332,10000,1,1),(2,20.1298,-110.645,10000,1,1);
+INSERT INTO `location` VALUES (16,33.953,-117.397,20000.000,0,7,'Riverside, CA'),(17,36.713,-119.748,20000.000,0,7,'Fresno, CA');
 /*!40000 ALTER TABLE `location` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -62,7 +63,7 @@ CREATE TABLE `service` (
   PRIMARY KEY (`id`),
   KEY `userid` (`userid`),
   CONSTRAINT `service_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,7 +72,7 @@ CREATE TABLE `service` (
 
 LOCK TABLES `service` WRITE;
 /*!40000 ALTER TABLE `service` DISABLE KEYS */;
-INSERT INTO `service` VALUES (1,'Mock',1,1);
+INSERT INTO `service` VALUES (7,'Mock',0,1);
 /*!40000 ALTER TABLE `service` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -91,7 +92,7 @@ CREATE TABLE `time` (
   PRIMARY KEY (`id`),
   KEY `serviceid` (`serviceid`),
   CONSTRAINT `time_ibfk_1` FOREIGN KEY (`serviceid`) REFERENCES `service` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -100,6 +101,7 @@ CREATE TABLE `time` (
 
 LOCK TABLES `time` WRITE;
 /*!40000 ALTER TABLE `time` DISABLE KEYS */;
+INSERT INTO `time` VALUES (7,'10:00 AM','11:59 PM',1,7);
 /*!40000 ALTER TABLE `time` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -138,7 +140,7 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-02-27 21:51:02
+-- Dump completed on 2016-02-29 20:17:17
 CREATE DATABASE  IF NOT EXISTS `mock` /*!40100 DEFAULT CHARACTER SET latin1 */;
 USE `mock`;
 -- MySQL dump 10.13  Distrib 5.7.9, for osx10.9 (x86_64)
@@ -180,7 +182,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'ryan','123','ryanpholt@me.com'),(2,'erikson','123','eriksontung@gmail.com'),(3,'elaine','123',NULL);
+INSERT INTO `user` VALUES (1,'ryan','123','ryanpholt@me.com'),(2,'erikson','123','eriksontung@gmail.com'),(3,'elaine','123','eleun003@ucr.edu');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -193,4 +195,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-02-27 21:51:02
+-- Dump completed on 2016-02-29 20:17:17

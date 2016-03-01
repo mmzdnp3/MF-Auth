@@ -44,6 +44,7 @@ class Location(db.Model):
     longitude = db.Column(db.Float)
     radius = db.Column(db.Float)
     allow = db.Column(db.Integer)
+    place = db.Column(db.String(45))
     serviceid = db.Column(db.Integer, db.ForeignKey('service.id'))
 
 class Time(db.Model):

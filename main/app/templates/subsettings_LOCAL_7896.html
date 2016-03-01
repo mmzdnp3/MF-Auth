@@ -1,9 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
-<!DOCTYPE html>
-<html>
 <head>
-<meta charset="UTF-8">
+
   <title>MFAuth - {{service}} Preferences</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
   <script type="text/javascript" src='http://maps.google.com/maps/api/js?libraries=places'></script>
@@ -19,102 +17,31 @@
         collapsible: true
       });
     });
-	
-	
-    var deleteTimeRow = function (link, begin, end)
-    {
-		var row = link.parentNode.parentNode;
-		var table = row.parentNode; 
-		table.removeChild(row);
-		/* AJAX FOR LETTING THE FLASK SERVER KNOW TO DELETE TIME RECORD */
-		return $.ajax
-		({
-			url:"/settings/{{service}}",
-			type:'POST',
-			contentType: 'application/json',
-			data: JSON.stringify({type: "time", begintime: begin, endtime: end, addremove:"remove"}),
-			dataType: 'json',
-			success: function(e)
-			{
-				console.log(e);
-			}
-		}); 
-    }
-    var deleteLocRow = function (link, latitude, longitude, radius)
-    {
-		var row = link.parentNode.parentNode;
-		var table = row.parentNode; 
-		table.removeChild(row); 
-		/* AJAX FOR LETTING THE FLASK SERVER KNOW TO DELETE LOCATION RECORD */
-		return $.ajax
-		({
-			url:"/settings/{{service}}",
-			type:'POST',
-			contentType: 'application/json',
-			data: JSON.stringify({type: "loc", latitude: latitude, longitude: longitude, radius: radius, addremove:"remove"}),
-			dataType: 'json',
-			success: function(e)
-			{
-				console.log(e);
-			}
-		});
+
+    var deleteRow = function (link) {
+     var row = link.parentNode.parentNode;
+     var table = row.parentNode; 
+     table.removeChild(row); 
     }
 
-    function addRowLoc(location, latitude, longitude, allow, radius)
-    {
-		var x = document.getElementById("Locations").rows.length;
-		var table = document.getElementById("Locations");
-		var row = table.insertRow(x);
-		var cell1 = row.insertCell(0);
-		var cell2 = row.insertCell(1);
-		var cell3 = row.insertCell(2);
-		var cell4 = row.insertCell(3);
-		var cell5 = row.insertCell(4);
-		var cell6 = row.insertCell(5);
-		latitude = +latitude.toFixed(3);
-		longitude = +longitude.toFixed(3);
-		cell1.innerHTML = location;
-		cell2.innerHTML = latitude;
-		cell3.innerHTML = longitude;
-		cell4.innerHTML = radius;
-		cell5.innerHTML = '';
-		if(allow==1)
-		{
-			cell5.innerHTML += '<input type="checkbox" id="onetime" name="onetime" value="enable" checked>';
-		}
-		else
-		{
-			cell5.innerHTML += '<input type="checkbox" id="onetime" name="onetime" value="enable">';
-		}
-		cell6.innerHTML = '<a class="btn"  onclick="javascript:deleteLocRow(this, '+latitude+', '+longitude+','+radius+'); return false;"><i class="fa fa-minus-square" style="color:#1E90FF"></i></a>';
+    function addRow(location, radius) {
+    var x = document.getElementById("Locations").rows.length;
+    var table = document.getElementById("Locations");
+    var row = table.insertRow(x);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(2);
+    cell1.innerHTML = location;
+    cell2.innerHTML = radius;
+    cell3.innerHTML = '<a class="btn"  onclick="javascript:deleteRow(this); return false;"><i class="fa fa-times fa-lg" style="color:#198d98"></i></a>';
     }
 
-    function addRowTime(begin, end, allow)
-    {
-		var x = document.getElementById("Times").rows.length;
-		var table = document.getElementById("Times");
-		var row = table.insertRow(x);
-		var cell1 = row.insertCell(0);
-		var cell2 = row.insertCell(1);
-		var cell3 = row.insertCell(2);
-		var time = begin + ' - ' + end
-		cell1.innerHTML = time;
-		cell2.innerHTML = '';
-		if(allow==1)
-		{
-			cell2.innerHTML += '<input type="checkbox" id="'+begin+'-'+end+'" name="'+begin+'" value="'+end+'" checked>';
-		}
-		else
-		{
-			cell2.innerHTML += '<input type="checkbox" id="'+begin+'-'+end+'" name="'+begin+'" value="'+end+'">';
-		}
-		cell3.innerHTML = '<a class="btn"  onclick="javascript:deleteTimeRow(this,\''+begin+'\',\''+end+'\'); return false;"><i class="fa fa-minus-square" style="color:#1E90FF"></i></a>';
-	}
      </script>
+</head>
 <style>
 body{
   background: #2f3842;
-    color: #2f3842;
+    color: #999;
     font-family: "Helvetica Neue", Helvetica, sans-serif;
     margin: 0;
     overflow-y: auto;
@@ -363,8 +290,6 @@ th {
 }
 
 </style>
-</head>
-
 <body>
   <nav class="fixed-nav-bar">
         </div>
@@ -384,49 +309,20 @@ th {
       <p>Preferences for {{service}}</p>
     </div>
   
+  <form action="{{url_for('subsettings',service=service)}}" method="POST">
   
-<div id="accordion">
+  <div id="accordion">
   
 
     
 <!--    OTP -->
     <h3>One-time Password</h3>
     <div>
-		{%if onetimepass==0 %}
-			<input type="checkbox" id="onetime" name="onetime" value="enable"> Enable One-time Password Authentication</input>
-		{% else %}
-			<input type="checkbox" id="onetime" name="onetime" value="enable" checked> Enable One-time Password Authentication</input>
-		{% endif %}
-		<script>
-		$("input[type=checkbox][name=onetime]").change(function() 
-		{
-			var enable = 0
-			if(this.checked)
-			{
-				enable = 1
-			}
-			else
-			{
-				enable = 0
-			}
-			$.ajax
-			({
-				url:"/settings/{{service}}",
-				type:'POST',
-				contentType: 'application/json',
-				data: JSON.stringify({type: "otp", enable:enable}),
-				dataType: 'json',
-				success: function(e)
-				{
-				console.log(e);
-				}
-			});
-		});
-		</script>
+      <input type="checkbox" id="onetime" name="onetime" value="enable"> Enable One-time Password Authentication
+      <input type="submit" style="float:right; " value="Save">
     </div>
     
-    
-    
+
 
 <!--     LOCATION RESTRICTIONS -->
     <h3>Location Restrictions</h3>
@@ -438,62 +334,12 @@ th {
   <table id="Locations">
   <tr>
     <th>Location</th>
-    <th>Latitude </th>
-    <th>Longitude </th>
     <th>Radius </th>
-    <th>Allow </th>
     <th>Remove</th>
   </tr>
-  
-<!-- GENERATING TABLE BASED ON LOCATION LIST FROM DB -->
-  {% for loc in locationList %}
-  <tr>
-	  <td>{{loc.place}}</td>
-	  <td>{{loc.latitude}}</td>
-	  <td>{{loc.longitude}}</td>
-	  <td>{{loc.radius}}</td>
-	  
-		{%if loc.allow==0 %}
-			<td><input type="checkbox" id="loc-{{loc.id}}" name="time" value="enable"></td>
-		{% else %}
-			<td><input type="checkbox" id="loc-{{loc.id}}" name="time" value="enable" checked></td>
-		{% endif %}
-		<script>
-			$("input[type=checkbox][id=loc-{{loc.id}}]").change(function() 
-			{
-				var enable = 0
-				if(this.checked)
-				{
-					enable = 1
-				}
-				else
-				{
-					enable = 0
-				}
-				$.ajax
-				({
-					url:"/settings/{{service}}",
-					type:'POST',
-					contentType: 'application/json',
-					data: JSON.stringify({type: "loc", latitude:{{loc.latitude}}, longitude:{{loc.longitude}}, radius:{{loc.radius}}, addremove:'check', allow:enable}),
-					dataType: 'json',
-					success: function(e)
-					{
-					console.log(e);
-					}
-				});
-			});			
-		  </script>	    
-	  <td><a class="btn" onclick="javascript:deleteLocRow(this, {{loc.latitude}}, {{loc.longitude}}, {{loc.radius}}); return false;">
-		 <i class="fa fa-minus-square" style="color:#1E90FF"></i></a></td>
-  </tr>
-  {% endfor %}
-  
-  
-  
   </table>
-   
-   </div>
+<br><input type="submit" style="float:right" value="Save">
+    </div>
     
 
 
@@ -501,57 +347,7 @@ th {
     <h3>Time Restrictions</h3>
     <div>
         <a class="button" href="#popup2" style="color:white">+ Time Restriction</a><br><br>
-        <table id="Times">
-        <tr>
-          <th>Time Range</th>
-          <th>Allow</th>
-          <th>Remove</th>
-        </tr>
-        
-        
-        <!-- GENERATING TABLE BASED ON TIME LIST FROM DB -->
-		{% for time in timeList %}
-		<tr>
-		  <td>{{time.start}} - {{time.end}}</td>
-			{%if time.allow==0 %}
-				<td><input type="checkbox" id="time-{{time.id}}" name="time" value="enable"></td>
-			{% else %}
-				<td><input type="checkbox" id="time-{{time.id}}" name="time" value="enable" checked></td>
-			{% endif %}
-		  <script>
-			$("input[type=checkbox][id=time-{{time.id}}]").change(function() 
-			{
-				var enable = 0
-				if(this.checked)
-				{
-					enable = 1
-				}
-				else
-				{
-					enable = 0
-				}
-				$.ajax
-				({
-					url:"/settings/{{service}}",
-					type:'POST',
-					contentType: 'application/json',
-					data: JSON.stringify({type: "time", begintime:'{{time.start}}', endtime:'{{time.end}}', addremove:'check', allow:enable}),
-					dataType: 'json',
-					success: function(e)
-					{
-					console.log(e);
-					}
-				});
-			});
-				
-		  </script>
-		  <td><a class="btn" onclick="javascript:deleteTimeRow(this, '{{time.start}}', '{{time.end}}'); return false;">
-			 <i class="fa fa-minus-square" style="color:#1E90FF"></i></a></td>
-		</tr>
-		{% endfor %}
-        
-        
-        </table>
+      
     </div>
   </div>
 
@@ -578,32 +374,9 @@ th {
         <div class="col-sm-1"><input type="text" class="form-control" style="width: 110px" id="us2-lon"/></div>
       </div> -->
       </div>
-      <br>
-       <a class="button"  onclick="addLocation()">Add</a>
-       <div style="float:right"><input type="checkbox" id="locallow" name="locallow" value="enable"> Allow</input></div>
-      </div>
       <script>
-        function addLocation()
-        {
-			var allow = 0;
-			if($("#locallow").is(':checked'))
-			{
-				allow = 1;
-			}
-			addRowLoc(city + ", " + state, lat, longitude, allow,rad)
-      var place = (city + ", " + state)
-			return $.ajax
-			({
-				url:"/settings/{{service}}",
-				type:'POST',
-				contentType: 'application/json',
-				data: JSON.stringify({type: "loc", place: place, latitude: +lat.toFixed(3), longitude: +longitude.toFixed(3), radius: rad, allow: allow,addremove:"add"}),
-				dataType: 'json',
-				success: function(e)
-				{
-					console.log(e);
-				}
-			});
+        function addLocation() {
+          addRow(city + ", " + state, rad)
         }  
       $('#us2').locationpicker({
         location: {latitude: 33.953350, longitude: -117.396156},
@@ -619,18 +392,21 @@ th {
           city =  $(this).locationpicker('map').location.addressComponents.city
           state =  $(this).locationpicker('map').location.addressComponents.stateOrProvince
           lat = currentLocation.latitude
-          longitude = currentLocation.longitude  
+          long = currentLocation.longitude  
           rad = radius 
         },
         oninitialized: function(component) {
           city = $(component).locationpicker('map').location.addressComponents.city
           state = $(component).locationpicker('map').location.addressComponents.stateOrProvince
           lat = $(component).locationpicker('map').location.latitude
-          longitude = $(component).locationpicker('map').location.latitude
+          long = $(component).locationpicker('map').location.latitude
           rad = 0
         }    
         });
         </script>
+      <br>
+       <a class="button"  onclick="addLocation()">Add</a>
+      </div>
       </div>
     </div>
 
@@ -647,37 +423,9 @@ th {
         </div>
         
         <br>
-        <a class="button"  onclick="addTime()">Add</a>
-        <div style="float:right"><input type="checkbox" id="timeallow" name="timeallow" value="enable"> Allow</input></div>
+        <input type="submit" value="Add"> 
       </div>
       <script>
-       var hours1 = "10";
-       var minutes1 = "00 AM ";
-       var hours2 = "12";
-       var minutes2 = "00 PM ";
-       function addTime()
-       {
-		  var allow = 0;
-		  if($("#timeallow").is(':checked'))
-		  {
-			  allow = 1;
-		  }
-		  var begin = hours1 + ':' + minutes1
-		  var end = hours2 + ':' + minutes2
-          addRowTime(begin, end, allow);
-          return $.ajax
-		  ({
-			  url:"/settings/{{service}}",
-			  type:'POST',
-			  contentType: 'application/json',
-			  data: JSON.stringify({type: "time", begintime: begin, endtime: end, allow:allow, addremove:"add"}),
-			  dataType: 'json',
-			  success: function(e)
-			  {
-				console.log(e);
-			  }
-		  });
-       } 
         $("#slider-range").slider({
         range: true,
         min: 0,
@@ -685,8 +433,8 @@ th {
         step: 15,
         values: [600, 720],
         slide: function (e, ui) {
-          hours1 = Math.floor(ui.values[0] / 60);
-          minutes1 = ui.values[0] - (hours1 * 60);
+          var hours1 = Math.floor(ui.values[0] / 60);
+          var minutes1 = ui.values[0] - (hours1 * 60);
 
           if (hours1.length == 1) hours1 = '0' + hours1;
           if (minutes1.length == 1) minutes1 = '0' + minutes1;
@@ -709,8 +457,8 @@ th {
           }
           $('.slider-time').html(hours1 + ':' + minutes1);
 
-          hours2 = Math.floor(ui.values[1] / 60);
-          minutes2 = ui.values[1] - (hours2 * 60);
+          var hours2 = Math.floor(ui.values[1] / 60);
+          var minutes2 = ui.values[1] - (hours2 * 60);
 
           if (hours2.length == 1) hours2 = '0' + hours2;
           if (minutes2.length == 1) minutes2 = '0' + minutes2;
@@ -738,7 +486,11 @@ th {
       </div>
     </div>
 
+
+
+
+  </form>
 </div>
-</body>
-</html>
+
 {% endblock %}
+</body>
