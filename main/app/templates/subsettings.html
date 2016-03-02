@@ -400,14 +400,14 @@ th {
 		<script>
 		$("input[type=checkbox][name=onetime]").change(function() 
 		{
-			var enable = 0
+			var enable = 0;
 			if(this.checked)
 			{
-				enable = 1
+				enable = 1;
 			}
 			else
 			{
-				enable = 0
+				enable = 0;
 			}
 			$.ajax
 			({
@@ -440,8 +440,8 @@ th {
     <th>Location</th>
     <th>Latitude </th>
     <th>Longitude </th>
-    <th>Radius </th>
-    <th>Allow </th>
+    <th>Radius (m) </th>
+    <th>Allow Login</th>
     <th>Remove</th>
   </tr>
   
@@ -504,7 +504,7 @@ th {
         <table id="Times">
         <tr>
           <th>Time Range</th>
-          <th>Allow</th>
+          <th>Allow Login</th>
           <th>Remove</th>
         </tr>
         
@@ -590,8 +590,8 @@ th {
 			{
 				allow = 1;
 			}
-			addRowLoc(city + ", " + state, lat, longitude, allow,rad)
-      var place = (city + ", " + state)
+			addRowLoc(street + ", " + city + ", " + state, lat, longitude, allow,rad)
+      var place = (street + ", " + city + ", " + state)
 			return $.ajax
 			({
 				url:"/settings/{{service}}",
@@ -618,6 +618,7 @@ th {
         onchanged: function (currentLocation, radius, isMarkerDropped) {
           city =  $(this).locationpicker('map').location.addressComponents.city
           state =  $(this).locationpicker('map').location.addressComponents.stateOrProvince
+          street = $(this).locationpicker('map').location.addressComponents.addressLine1
           lat = currentLocation.latitude
           longitude = currentLocation.longitude  
           rad = radius 
@@ -625,6 +626,7 @@ th {
         oninitialized: function(component) {
           city = $(component).locationpicker('map').location.addressComponents.city
           state = $(component).locationpicker('map').location.addressComponents.stateOrProvince
+          street = $(component).locationpicker('map').location.addressComponents.addressLine1
           lat = $(component).locationpicker('map').location.latitude
           longitude = $(component).locationpicker('map').location.latitude
           rad = 0

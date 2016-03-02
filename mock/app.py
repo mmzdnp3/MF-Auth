@@ -68,6 +68,8 @@ def login():
         password = request.form['txtPassword']
         latitude = request.form['latitude']
         longitude = request.form['longitude']
+        print latitude
+        print longitude
         user = User.query.filter_by(username=username).filter_by(password=password)
         if user.count() == 1:  
             user = user.one()
@@ -108,7 +110,7 @@ def key():
     elif request.method == 'POST':
         key = request.form['txtKey']
         d = json.dumps({'otp' : key})
-        url = 'http://localhost:5000/api/verify_otp'
+        url = 'http://localhost:5000/api/verify_otp/' + user.username
         req = urllib2.Request(url, d, {'Content-Type' : 'application/json', 'Content-Length' : len(d)})
         response = urllib2.urlopen(req)
         data = json.loads(response.read())
