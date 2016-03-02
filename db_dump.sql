@@ -31,11 +31,11 @@ CREATE TABLE `location` (
   `radius` decimal(10,3) DEFAULT NULL,
   `allow` int(11) DEFAULT NULL,
   `serviceid` int(11) DEFAULT NULL,
-  `place` varchar(45) DEFAULT NULL,
+  `place` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `serviceid` (`serviceid`),
   CONSTRAINT `location_ibfk_1` FOREIGN KEY (`serviceid`) REFERENCES `service` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -44,7 +44,7 @@ CREATE TABLE `location` (
 
 LOCK TABLES `location` WRITE;
 /*!40000 ALTER TABLE `location` DISABLE KEYS */;
-INSERT INTO `location` VALUES (16,33.953,-117.397,20000.000,0,7,'Riverside, CA'),(17,36.713,-119.748,20000.000,0,7,'Fresno, CA');
+INSERT INTO `location` VALUES (32,33.975,-117.326,100.000,1,18,'N Campus Dr, Riverside, CA');
 /*!40000 ALTER TABLE `location` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -63,7 +63,7 @@ CREATE TABLE `service` (
   PRIMARY KEY (`id`),
   KEY `userid` (`userid`),
   CONSTRAINT `service_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -72,7 +72,7 @@ CREATE TABLE `service` (
 
 LOCK TABLES `service` WRITE;
 /*!40000 ALTER TABLE `service` DISABLE KEYS */;
-INSERT INTO `service` VALUES (7,'Mock',0,1);
+INSERT INTO `service` VALUES (18,'Mock',0,1);
 /*!40000 ALTER TABLE `service` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -92,7 +92,7 @@ CREATE TABLE `time` (
   PRIMARY KEY (`id`),
   KEY `serviceid` (`serviceid`),
   CONSTRAINT `time_ibfk_1` FOREIGN KEY (`serviceid`) REFERENCES `service` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -101,7 +101,6 @@ CREATE TABLE `time` (
 
 LOCK TABLES `time` WRITE;
 /*!40000 ALTER TABLE `time` DISABLE KEYS */;
-INSERT INTO `time` VALUES (7,'10:00 AM','11:59 PM',1,7);
 /*!40000 ALTER TABLE `time` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -140,7 +139,7 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-02-29 20:17:17
+-- Dump completed on 2016-03-01 19:37:45
 CREATE DATABASE  IF NOT EXISTS `mock` /*!40100 DEFAULT CHARACTER SET latin1 */;
 USE `mock`;
 -- MySQL dump 10.13  Distrib 5.7.9, for osx10.9 (x86_64)
@@ -195,4 +194,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-02-29 20:17:17
+-- Dump completed on 2016-03-01 19:37:46
